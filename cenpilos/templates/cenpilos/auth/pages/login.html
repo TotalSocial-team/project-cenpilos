@@ -1,0 +1,26 @@
+{% extends 'cenpilos/mainpage.html' %}
+
+{% block navbar %}
+    {% include 'cenpilos/auth/auth_index.html' %}
+{% endblock %}
+
+{% load crispy_forms_tags %}
+{% block maincontent %}
+<main class="page login-page">
+        <section class="clean-block clean-form dark">
+            <div class="container">
+                <div class="block-heading">
+                    <h2 class="text-info"><strong>Welcome Back!</strong></h2>
+                    <p>Use the form below to gain access to your account.</p>
+                </div>
+                <form class="text-info">
+                    {% csrf_token %}
+                    {{ form |crispy }}
+                    <button class="btn btn-primary btn-block" type="submit">Log In</button>
+                    <hr>
+                    <span class="text-muted"><a href="#">Forgot Password?</a></span>
+                </form>
+            </div>
+        </section>
+    </main>
+{% endblock %}

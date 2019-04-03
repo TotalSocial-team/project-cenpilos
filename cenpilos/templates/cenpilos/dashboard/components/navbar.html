@@ -1,0 +1,16 @@
+<nav class="navbar navbar-dark navbar-expand-lg fixed-top bg-primary clean-navbar">
+        <div class="container-fluid"><a class="navbar-brand logo" href="{% url 'dashboard' %}">{{ version_type }} {{ stage }} {{ type }} {{ number }}</a><button class="navbar-toggler" data-toggle="collapse" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse"
+                id="navcol-1">
+                <ul class="nav navbar-nav ml-auto">
+                    <li class="nav-item item" role="presentation"><a class="nav-link {{ feed }}" href="{% url 'dashboard' %}">My Feed</a></li>
+                    <li class="nav-item item" role="presentation"><a class="nav-link {{ notifications }}" href="{% url 'notifications' %}">Notifications  <span class="badge badge-info">0</span></a></li>
+                    <li class="nav-item dropdown"><a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="true" href="#">Account</a>
+                        <div class="dropdown-menu" role="menu">
+                            <h6 class="dropdown-header" role="presentation">Profile</h6><a class="dropdown-item" role="presentation" href="#">Profile</a><a class="dropdown-item" role="presentation" href="#">Edit</a>
+                            <div class="dropdown-divider" role="presentation"></div><a class="dropdown-item text-danger" role="presentation" href="#"><strong>Logout</strong></a></div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
