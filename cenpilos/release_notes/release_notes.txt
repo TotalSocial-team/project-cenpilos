@@ -1,9 +1,0 @@
-Login
-Registration
-Posting System -- text posting only
-Following System
-
-BLOCKIT -- our account protection system
-
-Swear Word Filter
-AI Chat Bot
