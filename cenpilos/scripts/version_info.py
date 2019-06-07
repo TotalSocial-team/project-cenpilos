@@ -1,6 +1,6 @@
 from typing import List
 import os
-parentDirectory = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
+info = os.path.join(os.path.abspath(os.path.join("version_info", os.pardir)), 'cenpilos', 'version_info', 'info.txt')
 
 
 def version_information() -> List[str]:
@@ -12,7 +12,7 @@ def version_information() -> List[str]:
         3. future features planned
     """
 
-    with open(os.path.join(parentDirectory, 'project_cenpilos', 'cenpilos', 'version_info', 'info.txt'), 'r') as notes:
+    with open(info, 'r') as notes:
         # splits the lines or splits the data at the \n character
         lines = notes.read().splitlines()
 

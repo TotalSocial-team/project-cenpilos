@@ -1,6 +1,7 @@
 from typing import List
 import os
-parentDirectory = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
+
+release_notes = os.path.join(os.path.abspath(os.path.join("release_notes", os.pardir)))
 
 
 def read_notes() -> List[List[str]]:
@@ -12,7 +13,7 @@ def read_notes() -> List[List[str]]:
         3. future features planned
     """
 
-    with open(os.path.join(parentDirectory, 'project_cenpilos', 'cenpilos', 'release_notes', 'release_notes.txt'), 'r') as notes:
+    with open(os.path.join(release_notes, "cenpilos", "release_notes", "release_notes.txt"), 'r') as notes:
         # splits the lines or splits the data at the \n character
         lines = notes.read().splitlines()
 
