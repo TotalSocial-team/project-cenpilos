@@ -11,17 +11,25 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+from whitenoise.django import DjangoWhiteNoise
+from django.core.wsgi import get_wsgi_application
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+application = get_wsgi_application()
+application = DjangoWhiteNoise(application)
+
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 STATIC_URL = '/static/'
 
+# Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'cenpilos/static'),
+    os.path.join(PROJECT_ROOT, 'static'),
 )
+
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 
 
@@ -46,6 +54,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'whitenoise.runserver_nostatic',
     'cenpilos.apps.CenpilosConfig',
     'crispy_forms',
 ]
@@ -58,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'project_cenpilos.urls'
