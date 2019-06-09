@@ -12,10 +12,6 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 from whitenoise.django import DjangoWhiteNoise
-from django.core.wsgi import get_wsgi_application
-
-application = get_wsgi_application()
-application = DjangoWhiteNoise(application)
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
@@ -94,7 +90,7 @@ WSGI_APPLICATION = 'project_cenpilos.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(PROJECT_ROOT, 'db.sqlite3'),
     }
 }
 
