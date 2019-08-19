@@ -16,6 +16,8 @@ import django_heroku
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
@@ -141,4 +143,3 @@ EMAIL_HOST_USER = 'george.zy.guo@gmail.com'
 EMAIL_HOST_PASSWORD = 'qndxbhvtbjzgdwwy'
 EMAIL_PORT = 587
 
-import django_heroku
