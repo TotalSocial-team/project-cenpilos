@@ -21,7 +21,7 @@ class Post:
     date: datetime
     comments: List[Comment]
     likes: int
-    userid: Any
+    user_id: Any
 
     def __init__(self, content: Any, user_id: Any) -> None:
         """ Initializes this class with content as <content>, the <user_id> as the user_id attribute.
@@ -74,7 +74,6 @@ class Post:
 
         for comment in self.comments:
             comment.save()
-        
 
     @staticmethod
     def read_swearwords() -> List[Any]:
