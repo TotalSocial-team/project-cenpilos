@@ -76,15 +76,14 @@ WSGI_APPLICATION = 'project_cenpilos.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'da9bkpr4tli9h',
+        'USER': 'enazncfhftyhhq',
+        'PASSWORD': '0b478e0317ad1a1b94f8f438b393201b97bfb2fd330c19debdb831ba0f619799',
+        'HOST': 'ec2-75-101-147-226.compute-1.amazonaws.com',
+        'PORT': '5432'
     }
 }
-
-import dj_database_url
-
-db_from_env = dj_database_url.config()
-DATABASES['default'].update(db_from_env)
 
 
 # Password validation
