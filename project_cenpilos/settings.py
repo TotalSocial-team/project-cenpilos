@@ -75,11 +75,7 @@ WSGI_APPLICATION = 'project_cenpilos.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 import dj_database_url
-DATABASES = {
-    'default': dj_database_url.parse(
-        'postgres://enazncfhftyhhq:0b478e0317ad1a1b94f8f438b393201b97bfb2fd330c19debdb831ba0f619799@ec2-75-101-147-226.compute-1.amazonaws.com:5432/da9bkpr4tli9h')
-}
-
+DATABASES = {}
 DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
              # Password validation
