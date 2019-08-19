@@ -11,22 +11,14 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import django_heroku
 
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.9/howto/static-files/
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATIC_URL = '/static/'
-
-# Extra places for collectstatic to find static files.
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ['SECRET_KEY']
@@ -49,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cenpilos.apps.CenpilosConfig',
     'crispy_forms',
-    'dj_database_url'
+    'dj_database_url',
+    'django_heroku'
 ]
 
 MIDDLEWARE = [
@@ -132,6 +125,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = "/static/"
+
+django_heroku.settings(locals())
+
+
 LOGIN_REDIRECT_URL = ''
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -141,3 +140,5 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'george.zy.guo@gmail.com'
 EMAIL_HOST_PASSWORD = 'qndxbhvtbjzgdwwy'
 EMAIL_PORT = 587
+
+import django_heroku
