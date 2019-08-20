@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import login
+from django.contrib.auth import *
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
@@ -8,12 +8,12 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_text, force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.generic import *
+from django.contrib.auth.models import User
 
 from project_cenpilos import settings
 from .forms import *
 from .scripts import release_notes, version_info
 from .tokens.activation_token import account_activation_token
-
 
 # activation account --- user must verify their account before they will be allowed to sign in!
 def activate(request, uidb64, token):
