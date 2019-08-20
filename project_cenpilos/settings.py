@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'cenpilos.apps.CenpilosConfig',
-    'crispy_forms',
 ]
 
 MIDDLEWARE = [
