@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'cenpilos.apps.CenpilosConfig',
 ]
 
 MIDDLEWARE = [
@@ -117,7 +116,6 @@ STATIC_URL = "/static/"
 django_heroku.settings(locals())
 
 LOGIN_REDIRECT_URL = ''
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # for gmail
 EMAIL_USE_TLS = True
