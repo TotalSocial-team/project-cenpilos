@@ -1,5 +1,4 @@
 from __future__ import annotations
-from cenpilos.models import Posts
 from cenpilos.forms import *
 from datetime import datetime
 from typing import *
