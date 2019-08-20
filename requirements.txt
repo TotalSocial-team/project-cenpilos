@@ -1,5 +1,4 @@
 django
-django-crispy-forms
 django-heroku
 astroid==2.2.5
 colorama==0.4.1
