@@ -111,7 +111,7 @@ class RegisterView(View):
                         'username': username,
                         'email_address': email,
                         'domain': get_current_site(request),
-                        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                        'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode,
                         'token': account_activation_token.make_token(user),
                     }
                 )
@@ -123,7 +123,7 @@ class RegisterView(View):
                         'username': username,
                         'email_address': email,
                         'domain': get_current_site(request),
-                        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                        'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode,
                         'token': account_activation_token.make_token(user),
                     }
                 )
