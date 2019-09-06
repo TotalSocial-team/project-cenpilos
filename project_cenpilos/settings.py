@@ -34,7 +34,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'cenpilos.apps.CenpilosConfig'
+    'cenpilos.apps.CenpilosConfig',
+    'crispy_forms'
 ]
 
 MIDDLEWARE = [
@@ -136,6 +137,8 @@ STATIC_URL = '/static/'
 # )
 
 LOGIN_REDIRECT_URL = ''
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # for gmail
 EMAIL_USE_TLS = True
