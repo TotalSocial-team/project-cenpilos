@@ -38,8 +38,7 @@ class RegisterView(View):
     """
     Registration View
     """
-    template_name = 'cenpilos/auth/pages/register.html'      # TODO: Create this template
-
+    template_name = 'cenpilos/auth/pages/register.html'
     def get(self, request, *args, **kwargs):
         """
         Executes when the get request is initiated
@@ -53,6 +52,8 @@ class RegisterView(View):
         """
         # initial form
         form = RegistrationForm()
+
+
 
         # extra variables to be passed to the initial screen
         content = {
@@ -162,6 +163,8 @@ class DashboardView(View):
                 #   2. template_name
                 #   3. the content variable, containing all the variables to be passed into the views
         """
+        if not request.user.is_authenticated():
+            return redirect('login')
 
         r_notes = release_notes.read_notes()
 
