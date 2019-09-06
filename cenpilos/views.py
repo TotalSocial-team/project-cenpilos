@@ -163,7 +163,7 @@ class DashboardView(View):
                 #   2. template_name
                 #   3. the content variable, containing all the variables to be passed into the views
         """
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             return redirect('login')
 
         r_notes = release_notes.read_notes()
