@@ -13,7 +13,7 @@
                     <h2 class="text-info"><strong>Welcome Back!</strong></h2>
                     <p>Use the form below to gain access to your account.</p>
                 </div>
-                <form class="text-info">
+                <form class="text-info" method="post" action="{% url 'login' %}">
                     {% csrf_token %}
                     {{ form |crispy }}
                     <button class="btn btn-primary btn-block" type="submit">Log In</button>
