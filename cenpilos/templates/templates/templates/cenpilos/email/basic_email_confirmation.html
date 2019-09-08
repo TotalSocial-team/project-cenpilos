@@ -1,0 +1,5 @@
+{% autoescape off %}
+Hi {{ user.username }},
+In order to continue you must verify {{ email_address }} before you can complete the registration process.
+    http://{{ domain }}{% url 'activate' uidb64=uid token=token %}
+{% endautoescape %}
