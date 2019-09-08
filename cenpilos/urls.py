@@ -15,11 +15,14 @@ urlpatterns = [
          , name="login"),
 
     # logout
-    # TODO: set the template url
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
     # dashboard
     path('', DashboardView.as_view(), name='dashboard'),
+
+    # handling a post like
+
+    path('like/', like_post, name='like_post'),
 
     # notifications
     path('notifications/', NotificationView.as_view(), name='notifications'),

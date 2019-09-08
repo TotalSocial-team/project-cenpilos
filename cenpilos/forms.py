@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.core.validators import validate_email
-from .models import *   # imports all of the models -- no need to say models.<model name>
+from django.contrib.auth.models import User
+from .models import *  # imports all of the models -- no need to say models.<model name>
 
 
 class RegistrationForm(UserCreationForm):
@@ -38,10 +39,15 @@ class PostForm(forms.ModelForm):
     """
 
     # post body field -- allows the user to write their post in a textarea
-    post_body = forms.CharField(widget=forms.Textarea)
+    post_body = forms.CharField(
+        widget=forms.Textarea(
+            attrs={'placeholder': 'What\'s on your mind?',
+                   'rows': 4,
+                   'class': 'form-control-lg'}),
+        label='')
+
 
     # saves the data to the Posts model
     class Meta:
-        model = Posts
-        # TODO: Find a better way to implement this
+        model = Post
         fields = ['post_body']

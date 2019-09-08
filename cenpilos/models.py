@@ -1,17 +1,37 @@
 from django.contrib.auth.models import User
 from django.db import models
-#
-#
-# # this is where the posts should be saved at
-class Posts(models.Model):
+import datetime
+from django.template.defaultfilters import slugify
+
+
+class Post(models.Model):
 
     # associates the user with this post
-    user_info = models.ForeignKey(User, on_delete=models.CASCADE, default=0)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, default=0)
 
-    post_body = models.CharField(max_length=100000)     # user can save up to 1000 characters
+    content = models.CharField(max_length=100000)     # user can save up to 1000 characters
 
-    # tags are defined in the following way:
-    #       1. <#><tag_name>
-    # TODO: Implement truncation logic
-    # TODO: Create tag fields
-    # TODO: Change the database type before starting the project
+    date = models.DateTimeField()
+
+    likes = models.ManyToManyField(User, related_name='likes')
+
+    @property
+    def total_likes(self) -> int:
+        """
+        Likes for the company
+        :return: Integer: Likes for the company
+        """
+        return self.likes.count()
+
+
+class Comment(models.Model):
+
+    author = models.ForeignKey(User, on_delete=models.CASCADE, default=0)
+
+    content = models.CharField(max_length=100000)
+
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, default=0)
+
+    date = models.DateTimeField()
+
+    likes = models.IntegerField(default=0)

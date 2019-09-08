@@ -9,11 +9,14 @@ from django.utils.encoding import force_text, force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.generic import *
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 
-from project_cenpilos import settings
+
 from .forms import *
 from .scripts import release_notes, version_info
 from .tokens.activation_token import account_activation_token
+from .models import *
+
 
 # activation account --- user must verify their account before they will be allowed to sign in!
 def activate(request, uidb64, token):
@@ -38,22 +41,14 @@ class RegisterView(View):
     """
     Registration View
     """
-    template_name = 'cenpilos/auth/pages/register.html'
+    template_name = 'cenpilos/auth/pages/register.html'  # TODO: Create this template
+
     def get(self, request, *args, **kwargs):
         """
-        Executes when the get request is initiated
-        :param request: A web request -- usually passed by the form
-        :param args: extra arguments
-        :param kwargs: extra arguments
-        :return:# returns a render method with:
-                #   1. request
-                #   2. template_name
-                #   3. the content variable, containing all the variables to be passed into the views
+        Processes the get request of the registrationView
         """
         # initial form
         form = RegistrationForm()
-
-
 
         # extra variables to be passed to the initial screen
         content = {
@@ -65,14 +60,7 @@ class RegisterView(View):
 
     def post(self, request, *args, **kwargs):
         """
-        Executes when the user submits a post request -- usually by clicking a button.
-        :param request: A web request -- usually passed by the form
-        :param args: extra arguments
-        :param kwargs: extra arguments
-        :return:# returns a render method with:
-                #   1. request
-                #   2. template_name
-                #   3. the content variable, containing all the variables to be passed into the views
+        Processes the post request of the registrationView
         """
 
         # Double checks to ensure the request method is POST
@@ -131,9 +119,9 @@ class RegisterView(View):
 
                 # Displays visual feedback to let the user know that their account is created
                 messages.warning(request, f'Before you can start using your account, you must'
-                f'verify your email before being able to login.')
+                                          f'verify your email before being able to login.')
                 # Redirects the user to the login page
-                return redirect('login')    # TODO: add 'login' to your urls.py file
+                return redirect('login')  # TODO: add 'login' to your urls.py file
         else:
             # if nothing was done
             form = RegistrationForm()
@@ -146,6 +134,7 @@ class RegisterView(View):
         return render(request, self.template_name, context)
 
 
+
 class DashboardView(View):
     """
     Dashboard View
@@ -154,19 +143,15 @@ class DashboardView(View):
 
     def get(self, request, *args, **kwargs):
         """
-        Executes when the get request is initiated
-        :param request: A web request -- usually passed by the form
-        :param args: extra arguments
-        :param kwargs: extra arguments
-        :return:# returns a render method with:
-                #   1. request
-                #   2. template_name
-                #   3. the content variable, containing all the variables to be passed into the views
+        Processes the get request for the main page.
         """
-        if not request.user.is_authenticated:
-            return redirect('login')
+
+        form = PostForm()
 
         r_notes = release_notes.read_notes()
+
+        if not request.user.is_authenticated:
+            return redirect('login')
 
         confirmed_working = r_notes[0]
 
@@ -206,8 +191,11 @@ class DashboardView(View):
 
         if protected_status == 0:
             description = 'Great news! We have not found any problems with you account. ' \
-                            'However, please check here for regular updates.'
+                          'However, please check here for regular updates.'
             d_colour = 'success'
+
+        # retrieve the post data
+        posts = Post.objects.filter(author=request.user)
 
         # extra variables to be passed to the initial screen
         content = {
@@ -221,9 +209,121 @@ class DashboardView(View):
             'protected_status': protected_status,
             'desc': description,
             'colour': d_colour,
+            'posts': posts,
             'feed': 'active',
+            'form': form,  # IMPORTANT! This is the main post form. DO NOT REMOVE!
+
         }
         return render(request, self.template_name, content)
+
+    def post(self, request, *args, **kwargs):
+        """
+        Processes the post request of the main page.
+        """
+
+        r_notes = release_notes.read_notes()
+
+        if not request.user.is_authenticated:
+            return redirect('login')
+
+        confirmed_working = r_notes[0]
+
+        if not confirmed_working:
+            confirmed_working = "None"
+
+        partially_working = r_notes[1]
+        if not partially_working:
+            partially_working = "None"
+
+        new_features = r_notes[2]
+        if not new_features:
+            new_features = "None"
+
+        # version information
+        version = version_info.version_information()
+        version_type = version[0]
+        stage = version[1]
+        v_type = version[2]
+        number = version[3]
+
+        # Blockit section
+
+        # variables
+        protected_status = 0
+        # protected status, numerical value to value displayed to the user: #
+        # if protected_status variable is:
+        # 0 == protected (no action needed)
+        # 1 == warning to be displayed to the user (might require user to take action)
+        # 2 == not protected (immediate action required)
+
+        # displayed underneath the account status
+        description = ""
+
+        # the colour of the description
+        d_colour = ''
+
+        if protected_status == 0:
+            description = 'Great news! We have not found any problems with you account. ' \
+                          'However, please check here for regular updates.'
+            d_colour = 'success'
+
+        # Double checks to ensure the request method is POST
+        if request.method == "POST":
+            # passes the post form with the filled in data for validation
+            form = PostForm(request.POST)
+
+            # checks to make sure the form is valid
+            if form.is_valid():
+
+                # don't save the data immediately.
+                post = form.save(commit=False)
+
+                # saves the post's content
+                content = form.cleaned_data['post_body'].strip()
+
+                post.content = content
+                post.author = request.user
+                post.date = datetime.date.today()
+
+                post.save()
+
+                messages.success(request, 'Your post was successfully saved!')
+
+                form = PostForm()
+
+        else:
+            # if nothing was done
+            form = PostForm()
+
+        posts = Post.objects.filter(author=request.user)
+
+        # extra variables to be passed to the initial screen
+        context = {
+            'partial': partially_working,
+            'confirmed': confirmed_working,
+            'new_features': new_features,
+            'stage': stage,
+            'type': v_type,
+            'number': number,
+            'version_type': version_type,
+            'protected_status': protected_status,
+            'desc': description,
+            'posts': posts,
+            'colour': d_colour,
+            'feed': 'active',
+            'form': form,  # IMPORTANT! This is the main post form. DO NOT REMOVE!
+
+        }
+
+        return render(request, self.template_name, context)
+
+
+def like_post(request):
+    post = get_object_or_404(Post, id=request.POST.get('post_id'))
+    post.likes.add(request.user)
+    post.save()
+
+    return redirect('dashboard')
 
 
 class NotificationView(View):

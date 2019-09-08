@@ -1,9 +1,14 @@
 Login
 Registration
+Posting System -- text posting only
+Like button finished
+Logout function completed
 
 BLOCKIT -- our account protection system
 
+Dislike Button
+Notification System
+Commenting System
 Swear Word Filter
 AI Chat Bot
-Posting System -- text posting only
 Following System
