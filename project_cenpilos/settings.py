@@ -149,3 +149,4 @@ EMAIL_HOST_USER = 'george.zy.guo@gmail.com'
 EMAIL_HOST_PASSWORD = 'qndxbhvtbjzgdwwy'
 EMAIL_PORT = 587
 
+SECURE_SSL_REDIRECT = True
