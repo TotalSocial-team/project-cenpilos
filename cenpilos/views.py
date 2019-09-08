@@ -15,7 +15,6 @@ from django.http import HttpResponseRedirect
 from .forms import *
 from .scripts import release_notes, version_info
 from .tokens.activation_token import account_activation_token
-from .post.Post import swearword_filter, read_swearwords
 from .models import *
 
 # activation account --- user must verify their account before they will be allowed to sign in!
