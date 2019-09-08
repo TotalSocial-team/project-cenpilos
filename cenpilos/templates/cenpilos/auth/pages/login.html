@@ -6,7 +6,7 @@
 
 {% load crispy_forms_tags %}
 {% block maincontent %}
-<main class="page login-page">
+    <main class="page login-page">
         <section class="clean-block clean-form dark">
             <div class="container">
                 <div class="block-heading">
@@ -15,10 +15,17 @@
                 </div>
                 <form class="text-info" method="post" action="{% url 'login' %}">
                     {% csrf_token %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
                     {{ form |crispy }}
                     <button class="btn btn-primary btn-block" type="submit">Log In</button>
                     <hr>
-                    <span class="text-muted"><a href="#">Forgot Password?</a></span>
+                    <span class="text-muted"><a href="{% url 'login-beta' %}">Login without signing up.</a></span>
                 </form>
             </div>
         </section>

@@ -6,8 +6,8 @@
 
 {% load crispy_forms_tags %}
 {% block maincontent %}
-<main class="page registration-page">
-     <section class="clean-block clean-form dark">
+    <main class="page registration-page">
+        <section class="clean-block clean-form dark">
             <div class="container">
                 <div class="block-heading">
                     <h2 class="text-info"><strong>We are glad to have you onboard!</strong></h2>
@@ -16,9 +16,16 @@
                 <form class="text-info" method="post">
                     {% csrf_token %}
                     {{ form |crispy }}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
                     <button class="btn btn-primary btn-block" type="submit">Sign Up</button>
                 </form>
             </div>
         </section>
-</main>
+    </main>
 {% endblock %}
