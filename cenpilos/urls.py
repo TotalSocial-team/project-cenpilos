@@ -21,8 +21,9 @@ urlpatterns = [
     path('', DashboardView.as_view(), name='dashboard'),
 
     # handling a post like
-
     path('like/', like_post, name='like_post'),
+
+    path('login-beta/', login_beta, name='login-beta'),
 
     # notifications
     path('notifications/', NotificationView.as_view(), name='notifications'),

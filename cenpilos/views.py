@@ -10,13 +10,13 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.generic import *
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-
+from django.http import HttpResponseRedirect
 
 from .forms import *
 from .scripts import release_notes, version_info
 from .tokens.activation_token import account_activation_token
+from .post.Post import swearword_filter, read_swearwords
 from .models import *
-
 
 # activation account --- user must verify their account before they will be allowed to sign in!
 def activate(request, uidb64, token):
@@ -319,12 +319,23 @@ class DashboardView(View):
 
 
 def like_post(request):
+    """ handles the liking of a post"""
+
     post = get_object_or_404(Post, id=request.POST.get('post_id'))
     post.likes.add(request.user)
     post.save()
 
     return redirect('dashboard')
 
+
+def login_beta(request):
+    """ Handles automatic login of beta user"""
+
+    beta_user = User.objects.get(username='betatest')
+
+    login(request, beta_user)
+
+    return redirect('dashboard')
 
 class NotificationView(View):
     """
