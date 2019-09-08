@@ -23,6 +23,22 @@
                         <div class="col">
                             <div class="card">
                                 <div class="card-body">
+                                    <h4 class="text-primary card-title" style="font-size: 100px;">
+                                        <strong>Announcing Text Posting</strong></h4>
+                                    <p class="card-text" style="font-size: 50px">Now you can post text and like your posts
+                                        you have created!&nbsp;</p>
+
+
+
+                                    <a class="card-link" href="#">Dismiss</a></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-body">
                                     <h4 class="text-primary card-title" style="font-size: 39px;">
                                         <strong>{{ version_type }} {{ stage }} {{ type }} {{ number }} Release
                                             Notes</strong></h4>
@@ -170,12 +186,14 @@
                                                 </div>
                                                 {% if post.total_likes == 1 %}
 
-                                                <p class="text-info" style="float: right;">{{ post.total_likes }} like</p>
-                                                    {% else %}
+                                                    <p class="text-info" style="float: right;">{{ post.total_likes }}
+                                                        like</p>
+                                                {% else %}
 
-                                                <p class="text-info" style="float: right;">{{ post.total_likes }} likes</p>
+                                                    <p class="text-info" style="float: right;">{{ post.total_likes }}
+                                                        likes</p>
 
-                                                {% endif  %}
+                                                {% endif %}
                                             </form>
 
                                             <button class="btn btn-link btn-sm" type="button" style="float: right;"><i
