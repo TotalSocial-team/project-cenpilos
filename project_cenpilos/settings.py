@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import dj_database_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -72,17 +73,8 @@ WSGI_APPLICATION = 'project_cenpilos.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'da9bkpr4tli9h',
-        'USER': 'enazncfhftyhhq',
-        'PASSWORD': '0b478e0317ad1a1b94f8f438b393201b97bfb2fd330c19debdb831ba0f619799',
-        'HOST': 'ec2-75-101-147-226.compute-1.amazonaws.com',
-        'PORT': '5432'
-    }
-}
+DATABASES = {}
+DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 
 
 # Password validation
@@ -144,9 +136,9 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # for gmail
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'george.zy.guo@gmail.com'
-EMAIL_HOST_PASSWORD = 'qndxbhvtbjzgdwwy'
-EMAIL_PORT = 587
+EMAIL_HOST = os.environ['Server']
+EMAIL_HOST_USER = os.environ['Email']
+EMAIL_HOST_PASSWORD = os.environ['Password']
+EMAIL_PORT = os.environ['E_HOST']
 
 SECURE_SSL_REDIRECT = True
