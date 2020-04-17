@@ -1,0 +1,92 @@
+<script>
+    $(document).ready(function () {
+        $("#message").empty();
+
+        $(document).on('click', '.likebutton', function (event) {
+            event.preventDefault();
+            var id = $(this).attr('value');
+            $.ajax({
+                type: 'POST',
+                url: {%  url 'like_post' %},
+                data: {
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                    post_id: $(this).attr('value'),
+                    success: function () {
+                        $("#posts").load(" #posts");
+                    }
+                }
+            })
+        });
+
+        $(document).on('click', '.dislikebutton', function (event) {
+            event.preventDefault();
+            var id = $(this).attr('value') + "_dislike";
+            $.ajax({
+                type: 'POST',
+                url: {%  url 'dislike_post' %},
+                data: {
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                    post_id: $(this).attr('value'),
+                    success: function () {
+                        $("#posts").load(" #posts");
+                    }
+                }
+            })
+        });
+
+        $(document).on('click', '.delete_post', function (event) {
+            console.log($(this).attr('data'));
+            event.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: {% url 'delete_post' %},
+                data: {
+                    post_id: $(this).attr('data'),
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                    success: function () {
+                        $('#posts').load(" #posts")
+                    }
+                }
+            })
+        });
+
+        $('.features_dismiss').on("click", function () {
+            $('.features').empty();
+        });
+        $('.textpost_dimiss').on("click", function () {
+            $('.textposting').empty();
+        })
+
+    });
+    $(document).on('submit', '#postform', function (e) {
+        e.preventDefault();
+        var serializedData = $(this).serialize();
+        $.ajax({
+            type: 'POST',
+            url: '{%  url 'dashboard' %}',
+            data: serializedData,
+            success: postSuccess,
+            error: postFail
+        })
+    });
+
+
+    function postSuccess(data, textStatus, jqXHR) {
+        $("#message").html("<div class=\"alert alert-success\" role=\"alert\">" + data.message + "</div>");
+        $("#posts").load(" #posts");
+        $("#postform")[0].reset();
+    }
+
+    function postFail(jqXHR, textStatus, errorThrown) {
+        var responseText = jQuery.parseJSON(jqXHR.responseText);
+        var error = Object.keys(responseText)[0];
+        $("#message").html("<div class=\"alert alert-danger\" role=\"alert\">" + responseText[error][0] + "</div>")
+
+    }
+
+    $('#post-content').focus(function () {
+        $("#message").empty();
+    });
+
+
+</script>

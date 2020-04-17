@@ -1,39 +1,36 @@
-from django.contrib import messages
-from django.contrib.auth import *
-from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import send_mail
-from django.shortcuts import render, redirect
-from django.template import loader
-from django.template.loader import render_to_string
-from django.utils.encoding import force_text, force_bytes
+from django.shortcuts import redirect, render
+
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.generic import *
-from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect
 
+from .BetaUserLogin.login_beta import login_beta_user
+from .Dashboard.dashbaord_requests import get_request, post_request
+from .Notifications.notification_requests import notifications_get_request
+from .Post.Posting import *
+from .Profiles.profile_requests import *
+from .Profiles.ProfileFunctions import add_friend_profile, remove_friend_profile
 from .forms import *
-from .scripts import release_notes, version_info
-from .tokens.activation_token import account_activation_token
-from .models import *
 
 # activation account --- user must verify their account before they will be allowed to sign in!
-def activate(request, uidb64, token):
-    try:
-        uid = force_text(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
+# def activate(request, uidb64, token):
+#     try:
+#         uid = force_text(urlsafe_base64_decode(uidb64))
+#         user = User.objects.get(pk=uid)
+#     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+#         user = None
+#
+#     if user is not None and account_activation_token.check_token(user, token):
+#         user.is_active = True
+#         user.save()
+#         login(request, user)
+#         messages.success(request, f'Thank you for confirming your email!')
+#         return redirect('login')
+#     else:
+#         messages.error(request, f'Your activation link is invalid!')
+#         return redirect('login')
 
-    if user is not None and account_activation_token.check_token(user, token):
-        user.is_active = True
-        user.save()
-        login(request, user)
-        messages.success(request, f'Thank you for confirming your email!')
-        return redirect('login')
-    else:
-        messages.error(request, f'Your activation link is invalid!')
-        return redirect('login')
+
+# VIEW CLASSES #
 
 
 class RegisterView(View):
@@ -82,44 +79,44 @@ class RegisterView(View):
                 # saves the user
                 user.save()
 
-                # sends the user confirmation email
-                # get the current site
-                current_site = get_current_site(request)
-
-                to_list = [user.email]
-                username = form.cleaned_data['username']
-                email = form.cleaned_data['email']
-
-                from_email = settings.EMAIL_HOST_USER
-
-                message = render_to_string(
-                    'cenpilos/email/basic_email_confirmation.html',
-                    {
-                        'username': username,
-                        'email_address': email,
-                        'domain': get_current_site(request),
-                        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                        'token': account_activation_token.make_token(user),
-                    }
-                )
-                subject = 'Activate your account with Practice Logger -- A service by Cenpilos Public.'
-                html_message = loader.render_to_string(
-                    'cenpilos/email/confirm_email_address.html',
-                    # TODO: Change the logo of the email template!
-                    {
-                        'username': username,
-                        'email_address': email,
-                        'domain': get_current_site(request),
-                        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                        'token': account_activation_token.make_token(user),
-                    }
-                )
-                send_mail(subject, message, from_email, to_list, fail_silently=True, html_message=html_message)
-
-                # Displays visual feedback to let the user know that their account is created
-                messages.warning(request, f'Before you can start using your account, you must'
-                                          f'verify your email before being able to login.')
-                # Redirects the user to the login page
+                # # sends the user confirmation email
+                # # get the current site
+                # current_site = get_current_site(request)
+                #
+                # to_list = [user.email]
+                # username = form.cleaned_data['username']
+                # email = form.cleaned_data['email']
+                #
+                # from_email = settings.EMAIL_HOST_USER
+                #
+                # message = render_to_string(
+                #     'cenpilos/email/basic_email_confirmation.html',
+                #     {
+                #         'username': username,
+                #         'email_address': email,
+                #         'domain': get_current_site(request),
+                #         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                #         'token': account_activation_token.make_token(user),
+                #     }
+                # )
+                # subject = 'Activate your account with Practice Logger -- A service by Cenpilos Public.'
+                # html_message = loader.render_to_string(
+                #     'cenpilos/email/confirm_email_address.html',
+                #     # TODO: Change the logo of the email template!
+                #     {
+                #         'username': username,
+                #         'email_address': email,
+                #         'domain': get_current_site(request),
+                #         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                #         'token': account_activation_token.make_token(user),
+                #     }
+                # )
+                # send_mail(subject, message, from_email, to_list, fail_silently=True, html_message=html_message)
+                #
+                # # Displays visual feedback to let the user know that their account is created
+                # messages.warning(request, f'Before you can start using your account, you must'
+                #                           f'verify your email before being able to login.')
+                # # Redirects the user to the login page
                 return redirect('login')  # TODO: add 'login' to your urls.py file
         else:
             # if nothing was done
@@ -133,7 +130,6 @@ class RegisterView(View):
         return render(request, self.template_name, context)
 
 
-
 class DashboardView(View):
     """
     Dashboard View
@@ -145,196 +141,42 @@ class DashboardView(View):
         Processes the get request for the main page.
         """
 
-        form = PostForm()
+        if not request.user.is_authenticated:
+            return redirect('login')
+        else:
+            return render(request, self.template_name, get_request(request))
 
-        r_notes = release_notes.read_notes()
+    def post(self, request, *args, **kwargs):
+        """
+        Processes the post request of the main page.
+        """
+        # TODO: account for authentication requirement
+        return post_request(request)
+
+
+class ProfileView(View):
+    """
+    Dashboard View
+    """
+    template_name = 'cenpilos/dashboard/pages/profile.html'
+
+    def get(self, request, username):
+        """
+        Processes the get request for the main page.
+        """
 
         if not request.user.is_authenticated:
             return redirect('login')
-
-        confirmed_working = r_notes[0]
-
-        if not confirmed_working:
-            confirmed_working = "None"
-
-        partially_working = r_notes[1]
-        if not partially_working:
-            partially_working = "None"
-
-        new_features = r_notes[2]
-        if not new_features:
-            new_features = "None"
-
-        # version information
-        version = version_info.version_information()
-        version_type = version[0]
-        stage = version[1]
-        v_type = version[2]
-        number = version[3]
-
-        # Blockit section
-
-        # variables
-        protected_status = 0
-        # protected status, numerical value to value displayed to the user: #
-        # if protected_status variable is:
-        # 0 == protected (no action needed)
-        # 1 == warning to be displayed to the user (might require user to take action)
-        # 2 == not protected (immediate action required)
-
-        # displayed underneath the account status
-        description = ""
-
-        # the colour of the description
-        d_colour = ''
-
-        if protected_status == 0:
-            description = 'Great news! We have not found any problems with you account. ' \
-                          'However, please check here for regular updates.'
-            d_colour = 'success'
-
-        # retrieve the post data
-        posts = Post.objects.filter(author=request.user)
-
-        # extra variables to be passed to the initial screen
-        content = {
-            'partial': partially_working,
-            'confirmed': confirmed_working,
-            'new_features': new_features,
-            'stage': stage,
-            'type': v_type,
-            'number': number,
-            'version_type': version_type,
-            'protected_status': protected_status,
-            'desc': description,
-            'colour': d_colour,
-            'posts': posts,
-            'feed': 'active',
-            'form': form,  # IMPORTANT! This is the main post form. DO NOT REMOVE!
-
-        }
-        return render(request, self.template_name, content)
+        else:
+            return render(request, self.template_name, profile_get_request(request, username))
 
     def post(self, request, *args, **kwargs):
         """
         Processes the post request of the main page.
         """
 
-        r_notes = release_notes.read_notes()
+        return render(request, self.template_name, profile_post_request(request))
 
-        if not request.user.is_authenticated:
-            return redirect('login')
-
-        confirmed_working = r_notes[0]
-
-        if not confirmed_working:
-            confirmed_working = "None"
-
-        partially_working = r_notes[1]
-        if not partially_working:
-            partially_working = "None"
-
-        new_features = r_notes[2]
-        if not new_features:
-            new_features = "None"
-
-        # version information
-        version = version_info.version_information()
-        version_type = version[0]
-        stage = version[1]
-        v_type = version[2]
-        number = version[3]
-
-        # Blockit section
-
-        # variables
-        protected_status = 0
-        # protected status, numerical value to value displayed to the user: #
-        # if protected_status variable is:
-        # 0 == protected (no action needed)
-        # 1 == warning to be displayed to the user (might require user to take action)
-        # 2 == not protected (immediate action required)
-
-        # displayed underneath the account status
-        description = ""
-
-        # the colour of the description
-        d_colour = ''
-
-        if protected_status == 0:
-            description = 'Great news! We have not found any problems with you account. ' \
-                          'However, please check here for regular updates.'
-            d_colour = 'success'
-
-        # Double checks to ensure the request method is POST
-        if request.method == "POST":
-            # passes the post form with the filled in data for validation
-            form = PostForm(request.POST)
-
-            # checks to make sure the form is valid
-            if form.is_valid():
-
-                # don't save the data immediately.
-                post = form.save(commit=False)
-
-                # saves the post's content
-                content = form.cleaned_data['post_body'].strip()
-
-                post.content = content
-                post.author = request.user
-                post.date = datetime.date.today()
-
-                post.save()
-
-                messages.success(request, 'Your post was successfully saved!')
-
-                form = PostForm()
-
-        else:
-            # if nothing was done
-            form = PostForm()
-
-        posts = Post.objects.filter(author=request.user)
-
-        # extra variables to be passed to the initial screen
-        context = {
-            'partial': partially_working,
-            'confirmed': confirmed_working,
-            'new_features': new_features,
-            'stage': stage,
-            'type': v_type,
-            'number': number,
-            'version_type': version_type,
-            'protected_status': protected_status,
-            'desc': description,
-            'posts': posts,
-            'colour': d_colour,
-            'feed': 'active',
-            'form': form,  # IMPORTANT! This is the main post form. DO NOT REMOVE!
-
-        }
-
-        return render(request, self.template_name, context)
-
-
-def like_post(request):
-    """ handles the liking of a post"""
-
-    post = get_object_or_404(Post, id=request.POST.get('post_id'))
-    post.likes.add(request.user)
-    post.save()
-
-    return redirect('dashboard')
-
-
-def login_beta(request):
-    """ Handles automatic login of beta user"""
-
-    beta_user = User.objects.get(username='betatest')
-
-    login(request, beta_user)
-
-    return redirect('dashboard')
 
 class NotificationView(View):
     """
@@ -354,19 +196,44 @@ class NotificationView(View):
                 #   3. the content variable, containing all the variables to be passed into the views
         """
 
-        # version information
-        version = version_info.version_information()
-        version_type = version[0]
-        stage = version[1]
-        v_type = version[2]
-        number = version[3]
+        if not request.user.is_authenticated:
+            return redirect('login')
+        else:
+            return render(request, self.template_name, notifications_get_request())
 
-        # extra variables to be passed to the initial screen
-        content = {
-            'stage': stage,
-            'type': v_type,
-            'number': number,
-            'version_type': version_type,
-            'notifications': 'active',
-        }
-        return render(request, self.template_name, content)
+
+# VIEW FUNCTIONS #
+def like_post(request):
+    """ handles the liking of a post"""
+
+    return like_pPost(request)
+
+
+def dislike_post(request):
+    """ Handles the disliking of a post """
+
+    return dislike_pPost(request)
+
+
+def delete_post(request):
+    """ Handles the deletion of a post """
+
+    return delete(request)
+
+
+def login_beta(request):
+    """ Handles automatic login of beta user"""
+
+    return login_beta_user(request)
+
+
+def add_friend(request, username):
+    """ Handle an addition of a friend """
+
+    return add_friend_profile(request, username)
+
+
+def remove_friend(request, username):
+    """ Handles the deletion of a friend """
+
+    return remove_friend_profile(request, username)

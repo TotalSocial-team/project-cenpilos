@@ -1,0 +1,27 @@
+{% load crispy_forms_tags %}
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="text-info card-title"><strong>New Post</strong></h4>
+        <form method="post" id="postform">
+            {% csrf_token %}
+            {{ form |crispy }}
+
+            <div id="message">
+
+            </div>
+            <h2 class="text-danger"><strong>STOP!</strong></h2>
+            <h5 class="text-danger">Make sure that you do not have any content included
+                that will fall under the category of
+                <strong>child abuse</strong>. Remember, if caught your account is going
+                to be reported to law enforcement agencies. <strong>No
+                    second chances will be given.</strong></h5>
+
+            <div class="form-group">
+                <button class="btn btn-info" type="submit"><strong>Post</strong>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<hr>

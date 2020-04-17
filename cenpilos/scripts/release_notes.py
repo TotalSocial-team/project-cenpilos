@@ -29,3 +29,22 @@ def read_notes() -> List[List[str]]:
         new_features = [lines[i] for i in range(partial_functional_end + 1, len(lines))]
 
     return [functional, partial_functional, new_features]
+
+
+def display_rnotes():
+    r_notes = read_notes()
+
+    confirmed_working = r_notes[0]
+
+    if not confirmed_working:
+        confirmed_working = "None"
+
+    partially_working = r_notes[1]
+    if not partially_working:
+        partially_working = "None"
+
+    new_features = r_notes[2]
+    if not new_features:
+        new_features = "None"
+
+    return [confirmed_working, partially_working, new_features]

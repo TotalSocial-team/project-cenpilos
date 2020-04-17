@@ -1,0 +1,34 @@
+<script>
+    $(document).ready(function () {
+        $(document).on('click', '.add_friend', function (event) {
+            event.preventDefault();
+
+            $.ajax({
+                type: 'POST',
+                url: '{% url 'add_friend' user.username %}',
+                data: {
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                },
+                success: function () {
+                    $('#friends').load(' #friends');
+                    $('#uer_controls').load(" #uer_controls");
+                }
+            })
+        });
+        $(document).on('click', '.remove_friend', function (event) {
+            event.preventDefault();
+
+            $.ajax({
+                type: 'POST',
+                url: '{% url 'remove_friend' user.username %}',
+                data: {
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                },
+                success: function () {
+                    $('#friends').load(' #friends');
+                    $('#uer_controls').load(" #uer_controls");
+                }
+            })
+        })
+    })
+</script>

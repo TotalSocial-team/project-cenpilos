@@ -1,0 +1,94 @@
+{% extends 'cenpilos/mainpage.html' %}
+
+{% block navbar %}
+    {% include 'cenpilos/dashboard/components/navbar.html' %}
+{% endblock %}
+
+
+
+{% block maincontent %}
+    <main class="page">
+        <section class="clean-block">
+            <div class="container-fluid">
+                <div class="block-heading">
+                    <h2 class="text-left text-info" style="font-size: 85px; font-weight: bolder">
+                        <strong>{{ user.username }}'s Profile&nbsp;</strong>
+                        {% if profilepage.verified %}
+                        <i class="fas fa-check-circle"></i>
+                        {% endif %}
+                    </h2>
+                    <h3 class="text-left text-primary" style="font-size: 40px">
+                        <strong>Stats:</strong>
+                        <span id="friends">
+                            {{ profilepage.total_friends }} {% if profilepage.total_friends == 1 %} friend {% else %}
+                            friends {% endif %}
+                        </span>
+                    </h3>
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div class="block-content">
+                    <div class="row">
+                        <div class="col-xl-5">
+                            <div class="card" id="uer_controls">
+                                {% if user != request.user %}
+                                    <div class="card-body">
+                                        <h2 class="text-info"><strong>User Controls</strong> <span
+                                                class="badge badge-info"> New</span></h2>
+                                        {% csrf_token %}
+                                        {% if user not in logged_in_profile.friends.all %}
+                                            <p>
+                                            <button class="btn btn-primary btn-lg add_friend" type="submit"><strong>Friend</strong>
+                                                </button>
+                                            </p>
+                                        {% else %}
+                                            <p>
+                                                <button class="btn btn-danger btn-lg remove_friend" type="submit">
+                                                    <strong>Unfriend</strong>
+                                                </button>
+                                            </p>
+                                        {% endif %}
+                                        <p>
+                                            <button class="btn btn-danger btn-lg" type="button"><strong>Block</strong>
+                                            </button>
+                                        </p>
+                                        <p>
+                                            <button class="btn btn-danger btn-lg" type="button"><strong>Report</strong>
+                                            </button>
+                                        </p>
+                                    </div>
+                                {% else %}
+                                    <div class="card-body">
+                                        <h2 class="text-info"><strong>Find Friends</strong> <span
+                                                class="badge badge-info"> New</span></h2>
+                                        {% for u in all_users %}
+                                            <p>
+                                                <a href="{% url 'profile' u.username %}">{{ u.username }}</a>
+                                            </p>
+                                        {% endfor %}
+
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-xl-7">
+                            {% if user == request.user %}
+                                {% include 'cenpilos/dashboard/components/create_post.html' %}
+                            {% endif %}
+                            <h2 class="text-left text-info" style="font-size: 62px;"><strong>Posts made
+                                by {{ user.username }}</strong></h2>
+                            <hr>
+                            {% include 'cenpilos/dashboard/components/feed.html' %}
+
+                        </div>
+                    </div>
+                </div>
+                <div>
+        </section>
+    </main>
+
+{% endblock %}
+{% block javascript %}
+    {% include 'cenpilos/dashboard/js/feed_processor.html' %}
+    {% include 'cenpilos/dashboard/js/friend_processor.html' %}
+{% endblock %}

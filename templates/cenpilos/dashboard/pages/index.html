@@ -1,0 +1,181 @@
+{% extends 'cenpilos/mainpage.html' %}
+
+{% block navbar %}
+    {% include 'cenpilos/dashboard/components/navbar.html' %}
+{% endblock %}
+
+{% load crispy_forms_tags %}
+
+{% block maincontent %}
+    <main class="page">
+        <section class="clean-block">
+            <div class="container-fluid">
+                <div class="block-heading">
+                    {% if request.user.is_authenticated %}
+                        <h1 class="text-primary"><strong>Howdy, {{ request.user.username }}</strong></h1>
+                    {% else %}
+                        <h1 class="text-primary"><strong>Howdy, Beta Tester</strong></h1>
+                    {% endif %}
+
+                </div>
+                <div class="block-content">
+{#                    <div class="row textposting">#}
+{#                        <div class="col">#}
+{#                            <div class="card ">#}
+{#                                <div class="card-body">#}
+{#                                    <h4 class="text-primary card-title" style="font-size: 50px;">#}
+{#                                        <strong>Cenpilos and Child Abuse</strong></h4>#}
+{#                                    <p class="card-text" style="font-size: 40px;">This is your one and#}
+{#                                        <strong>ONLY</strong> warning.#}
+{#                                        When posting content that involves children under 18, you <strong>must</strong>#}
+{#                                        never:</p>#}
+{#                                    <ul style="font-size: 40px;">#}
+{#                                        <li>Post or repost content that involves children getting hurt.</li>#}
+{#                                        <li>Post or repost content that involves child pornography, sexual abuse, sexual#}
+{#                                            exploitation.#}
+{#                                        </li>#}
+{#                                        <li>Post or repost content that otherwise shows children in an indecent state.#}
+{#                                        </li>#}
+{#                                    </ul>#}
+{#                                    <p class="card-text" style="font-size: 40px;">If you are caught doing any of the#}
+{#                                        above, your account will be terminated,#}
+{#                                        your information will be forwarded to law enforcement for further investigation.#}
+{#                                        <strong>No second chances will be given.</strong></p>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+
+                    <div class="row features">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="text-primary card-title" style="font-size: 39px;">
+                                        <strong>{{ version_type }} {{ stage }} {{ type }} {{ number }} Release
+                                            Notes</strong></h4>
+                                    <p class="card-text">The following features <strong>have been tested </strong>and
+                                        has been verified to be working in this release:&nbsp;</p>
+                                    <ul>
+                                        {% if confirmed != 'None' %}
+                                            {% for c in confirmed %}
+                                                <li>{{ c }}</li>
+                                            {% endfor %}
+                                        {% else %}
+                                            <li><strong>No new features to report</strong>.</li>
+                                        {% endif %}
+
+                                    </ul>
+                                    <p class="card-text">The following features are considered as
+                                        <strong>EXPERIMENTAL</strong> features and only should be used at your <strong>own
+                                            risk</strong>!</p>
+                                    <ul>
+                                        {% if partial != 'None' %}
+                                            {% for part in partial %}
+                                                <li>{{ part }}</li>
+                                            {% endfor %}
+                                        {% else %}
+                                            <li><strong>No new features to report</strong>.</li>
+                                        {% endif %}
+                                    </ul>
+
+                                    <p class="card-text">Upcoming Features...</p>
+                                    <ul>
+                                        {% if upcoming_features != 'None' %}
+                                            {% for ufeatures in upcoming_features %}
+                                                <li>{{ ufeatures }}</li>
+                                            {% endfor %}
+                                        {% else %}
+                                            <li><strong>We are not planning anymore features in the next
+                                                release</strong>.
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+
+
+                                    <a class="card-link features_dismiss" href="javascript:void(0)">Dismiss</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div class="block-content">
+                    <div class="row">
+                        <div class="col-xl-5">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h2 class="text-info"><strong>BLOCKIT Account Status</strong> <span
+                                            class="badge badge-info"> New</span></h2>
+                                    {% if protected_status == 0 %}
+                                        <p class="text-success card-text" style="font-size: 26px;"><i
+                                                class="fas fa-check-circle"></i><span>&nbsp;<strong>Account Protected</strong></span>
+                                        </p>
+                                    {% endif %}
+
+                                    {% if protected_status == 1 %}
+                                        <p class="text-warning card-text" style="font-size: 26px;"><i
+                                                class="fas fa-exclamation-circle"></i><span>&nbsp;<strong>Your Account Needs Attention</strong></span>
+                                        </p>
+                                    {% endif %}
+
+                                    {% if protected_status == 2 %}
+                                        <p class="text-danger card-text" style="font-size: 26px;"><i
+                                                class="fas fa-times-circle"></i><span>&nbsp;<strong>Account Not Protected</strong></span>
+                                        </p>
+                                    {% endif %}
+
+                                    <p class="text-{{ colour }} card-text">{{ desc }}</p>
+                                </div>
+                            </div>
+                        <hr>
+                            <div class="card">
+                                <div class="card-body">
+                                    <h1 class="text-primary card-title"><strong>Your Friends</strong></h1>
+                                    {% if friends %}
+                                        <ul class="list-group">
+                                        {% for friend in friends %}
+                                            <li class="list-group-item"><a href="{% url 'profile'  friend.username %}">{{ friend.username }}</a> </li>
+                                        {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-7">
+                            {% include 'cenpilos/dashboard/components/create_post.html' %}
+                            <h1 class="text-info"><strong>Your Feed</strong></h1>
+                            <hr>
+                            {% include 'cenpilos/dashboard/components/feed.html' %}
+                            <div class="card">
+                                <div class="card-body"><span class="badge badge-info promo">Promotion</span><span
+                                        class="promo"></span>
+                                    <h4 class="card-title heading-promo"><strong>Your information is yours!</strong>
+                                    </h4>
+                                    <p class="card-text body-promo">In the world today, Facebook, Twitter and
+                                        Snapchat... even Amazon sells your personal information &nbsp;to third parties
+                                        of even to the black market.</p>
+                                    <p class="card-text body-promo"><strong>Cenpilos </strong>is changing it. Cenpilos
+                                        WILL NEVER sell or give your information to third parties.&nbsp;</p>
+                                    <button class="btn btn-primary" type="button">Learn more here.</button>
+                                    <hr>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button class="btn btn-info" type="button"><i
+                                                class="far fa-thumbs-up"></i><span>Upvote</span></button>
+                                        <button class="btn btn-danger" type="button"><i
+                                                class="far fa-thumbs-down"></i><span>Downvote</span></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+        </section>
+    </main>
+
+{% endblock %}
+{% block javascript %}
+    {% include 'cenpilos/dashboard/js/feed_processor.html' %}
+{% endblock %}

@@ -3,12 +3,14 @@ Registration
 Posting System -- text posting only
 Like button finished
 Logout function completed
+Dislike Button
+Remove Posts
+Friend System
+Profile Page
 
 BLOCKIT -- our account protection system
 
-Dislike Button
 Notification System
 Commenting System
 Swear Word Filter
 AI Chat Bot
-Following System

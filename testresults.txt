@@ -1,0 +1,362 @@
+Creating test database for alias 'default'...
+.............................E......EE.F...FFE....EFEEEE.
+======================================================================
+ERROR: test_dashboard_POST_ajax_non_authenticated (cenpilos.tests.tests_views.TestDashboard)
+Sends an ajax POST request to an non-authenticated dashboard instance
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 91, in test_dashboard_POST_ajax_non_authenticated
+    response = self.client.post(reverse('dashboard'), data, **{'HTTP_X_REQUESTED_WITH':
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 526, in post
+    response = super().post(path, data=data, content_type=content_type, secure=secure, **extra)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 355, in post
+    return self.generic('POST', path, post_data, content_type,
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 421, in generic
+    return self.request(**r)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 496, in request
+    raise exc_value
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\core\handlers\base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\core\handlers\base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\views\generic\base.py", line 71, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\views\generic\base.py", line 97, in dispatch
+    return handler(request, *args, **kwargs)
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\views.py", line 154, in post
+    return post_request(request)
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\Dashboard\dashbaord_requests.py", line 59, in post_request
+    return save_post(request, form)
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\Post\Posting.py", line 23, in save_post
+    post.author = request.user
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\fields\related_descriptors.py", line 214, in __set__
+    raise ValueError(
+ValueError: Cannot assign "<SimpleLazyObject: <django.contrib.auth.models.AnonymousUser object at 0x04F64D30>>": "Post.author" must be a "User" instance.
+
+======================================================================
+ERROR: test_dashboard_POST_non_ajax_login_successful (cenpilos.tests.tests_views.TestDashboard)
+Sends a valid username and then a non-ajax POST request
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 129, in test_dashboard_POST_non_ajax_login_successful
+    response = self.client.post(reverse('dashboard'), data)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 526, in post
+    response = super().post(path, data=data, content_type=content_type, secure=secure, **extra)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 355, in post
+    return self.generic('POST', path, post_data, content_type,
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 421, in generic
+    return self.request(**r)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 496, in request
+    raise exc_value
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\core\handlers\base.py", line 124, in _get_response
+    raise ValueError(
+ValueError: The view cenpilos.views.DashboardView didn't return an HttpResponse object. It returned None instead.
+
+======================================================================
+ERROR: test_dashboard_POST_non_ajax_non_authenticated (cenpilos.tests.tests_views.TestDashboard)
+Sends a non-ajax POST request to an non-authenticated dashboard instance
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 80, in test_dashboard_POST_non_ajax_non_authenticated
+    response = client.post(reverse('dashboard'))
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 526, in post
+    response = super().post(path, data=data, content_type=content_type, secure=secure, **extra)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 355, in post
+    return self.generic('POST', path, post_data, content_type,
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 421, in generic
+    return self.request(**r)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 496, in request
+    raise exc_value
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\core\handlers\base.py", line 124, in _get_response
+    raise ValueError(
+ValueError: The view cenpilos.views.DashboardView didn't return an HttpResponse object. It returned None instead.
+
+======================================================================
+ERROR: test_likePost_post_like_post_non_authenticated (cenpilos.tests.tests_views.TestLikingPost)
+Sends a post request to posts when you are non-authenticated with posts queried
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\fields\__init__.py", line 1768, in get_prep_value
+    return int(value)
+TypeError: int() argument must be a string, a bytes-like object or a number, not 'SimpleLazyObject'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 463, in test_likePost_post_like_post_non_authenticated
+    response = self.client.post(reverse('like_post'), {'post_id': post_id}, follow=True)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 526, in post
+    response = super().post(path, data=data, content_type=content_type, secure=secure, **extra)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 355, in post
+    return self.generic('POST', path, post_data, content_type,
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 421, in generic
+    return self.request(**r)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 496, in request
+    raise exc_value
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\core\handlers\base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\core\handlers\base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\views.py", line 209, in like_post
+    return like_pPost(request)
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\Post\Posting.py", line 59, in like_pPost
+    post.likes.add(request.user)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\fields\related_descriptors.py", line 944, in add
+    self._add_items(
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\fields\related_descriptors.py", line 1123, in _add_items
+    self.through._default_manager.using(db).bulk_create([
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\query.py", line 492, in bulk_create
+    returned_columns = self._batched_insert(
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\query.py", line 1230, in _batched_insert
+    self._insert(item, fields=fields, using=self.db, ignore_conflicts=ignore_conflicts)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\query.py", line 1204, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\sql\compiler.py", line 1376, in execute_sql
+    for sql, params in self.as_sql():
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\sql\compiler.py", line 1319, in as_sql
+    value_rows = [
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\sql\compiler.py", line 1320, in <listcomp>
+    [self.prepare_value(field, self.pre_save_val(field, obj)) for field in fields]
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\sql\compiler.py", line 1320, in <listcomp>
+    [self.prepare_value(field, self.pre_save_val(field, obj)) for field in fields]
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\sql\compiler.py", line 1261, in prepare_value
+    value = field.get_db_prep_save(value, connection=self.connection)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\fields\related.py", line 939, in get_db_prep_save
+    return self.target_field.get_db_prep_save(value, connection=connection)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\fields\__init__.py", line 817, in get_db_prep_save
+    return self.get_db_prep_value(value, connection=connection, prepared=False)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\fields\__init__.py", line 2361, in get_db_prep_value
+    value = self.get_prep_value(value)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\fields\__init__.py", line 1770, in get_prep_value
+    raise e.__class__(
+TypeError: Field 'id' expected a number but got <SimpleLazyObject: <django.contrib.auth.models.AnonymousUser object at 0x05011430>>.
+
+======================================================================
+ERROR: test_addFriend_no_user_authenticated (cenpilos.tests.tests_views.TestProfilePage)
+Adds a friend while logged in but the username does not exist
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 602, in test_addFriend_no_user_authenticated
+    response = self.client.get(reverse('add_friend', args=['doesnotexist']), follow=True)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 518, in get
+    response = super().get(path, data=data, secure=secure, **extra)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 344, in get
+    return self.generic('GET', path, secure=secure, **{
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 421, in generic
+    return self.request(**r)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 496, in request
+    raise exc_value
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\core\handlers\base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\core\handlers\base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\views.py", line 233, in add_friend
+    return add_friend_profile(request, username)
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\Profiles\ProfileFunctions.py", line 18, in add_friend_profile
+    username_param = User.objects.get(username=username)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\manager.py", line 82, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\query.py", line 415, in get
+    raise self.model.DoesNotExist(
+django.contrib.auth.models.User.DoesNotExist: User matching query does not exist.
+
+======================================================================
+ERROR: test_addFriend_user_invalid_characters_non_authenticated (cenpilos.tests.tests_views.TestProfilePage)
+Adds a friend without loggin in with a username containing invalid characters
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 580, in test_addFriend_user_invalid_characters_non_authenticated
+    response = self.client.get(reverse('add_friend', args=['doest_@3j3i_3!!']), follow=True)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 518, in get
+    response = super().get(path, data=data, secure=secure, **extra)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 344, in get
+    return self.generic('GET', path, secure=secure, **{
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 421, in generic
+    return self.request(**r)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 496, in request
+    raise exc_value
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\core\handlers\base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\core\handlers\base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\views.py", line 233, in add_friend
+    return add_friend_profile(request, username)
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\Profiles\ProfileFunctions.py", line 18, in add_friend_profile
+    username_param = User.objects.get(username=username)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\manager.py", line 82, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\query.py", line 415, in get
+    raise self.model.DoesNotExist(
+django.contrib.auth.models.User.DoesNotExist: User matching query does not exist.
+
+======================================================================
+ERROR: test_addFriend_user_non_authenticated (cenpilos.tests.tests_views.TestProfilePage)
+Adds a friend without loggin in
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 573, in test_addFriend_user_non_authenticated
+    response = self.client.get(reverse('add_friend', args=['doesnotexist']), follow=True)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 518, in get
+    response = super().get(path, data=data, secure=secure, **extra)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 344, in get
+    return self.generic('GET', path, secure=secure, **{
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 421, in generic
+    return self.request(**r)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 496, in request
+    raise exc_value
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\core\handlers\base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\core\handlers\base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\views.py", line 233, in add_friend
+    return add_friend_profile(request, username)
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\Profiles\ProfileFunctions.py", line 18, in add_friend_profile
+    username_param = User.objects.get(username=username)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\manager.py", line 82, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\query.py", line 415, in get
+    raise self.model.DoesNotExist(
+django.contrib.auth.models.User.DoesNotExist: User matching query does not exist.
+
+======================================================================
+ERROR: test_visit_own_profile_page_authenticated (cenpilos.tests.tests_views.TestProfilePage)
+Visit your own profile page while you are authenticated
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 591, in test_visit_own_profile_page_authenticated
+    response = self.client.get(reverse('profile', args=[self.username]), follow=True)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 518, in get
+    response = super().get(path, data=data, secure=secure, **extra)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 344, in get
+    return self.generic('GET', path, secure=secure, **{
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 421, in generic
+    return self.request(**r)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 496, in request
+    raise exc_value
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\core\handlers\base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\core\handlers\base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\views\generic\base.py", line 71, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\views\generic\base.py", line 97, in dispatch
+    return handler(request, *args, **kwargs)
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\views.py", line 171, in get
+    return render(request, self.template_name, profile_get_request(request, username))
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\shortcuts.py", line 19, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\utils.py", line 95, in instrumented_test_render
+    return self.nodelist.render(context)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\template\base.py", line 936, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\template\base.py", line 903, in render_annotated
+    return self.render(context)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\template\loader_tags.py", line 150, in render
+    return compiled_parent._render(context)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\utils.py", line 95, in instrumented_test_render
+    return self.nodelist.render(context)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\template\base.py", line 936, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\template\base.py", line 903, in render_annotated
+    return self.render(context)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\template\loader_tags.py", line 62, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\template\base.py", line 936, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\template\base.py", line 903, in render_annotated
+    return self.render(context)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\template\defaulttags.py", line 309, in render
+    return nodelist.render(context)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\template\base.py", line 936, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\template\base.py", line 903, in render_annotated
+    return self.render(context)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\template\defaulttags.py", line 209, in render
+    nodelist.append(node.render_annotated(context))
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\template\base.py", line 903, in render_annotated
+    return self.render(context)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\template\defaulttags.py", line 443, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\urls\base.py", line 87, in reverse
+    return iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\urls\resolvers.py", line 677, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'profile' with arguments '('autotesting_friend',)' not found. 1 pattern(s) tried: ['profile/(?P<username>[a-zA-Z0-9]+|)$']
+
+======================================================================
+ERROR: test_visit_profile_non_existent_invalid_characters_unauthenticated (cenpilos.tests.tests_views.TestProfilePage)
+Visits a user profile page that has invalid characters as the argument
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 566, in test_visit_profile_non_existent_invalid_characters_unauthenticated
+    response = self.client.get(reverse('profile', args=['doest_@3j3i_3!!']), follow=True)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\urls\base.py", line 87, in reverse
+    return iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\urls\resolvers.py", line 677, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'profile' with arguments '('doest_@3j3i_3!!',)' not found. 1 pattern(s) tried: ['profile/(?P<username>[a-zA-Z0-9]+|)$']
+
+======================================================================
+FAIL: test_likePost_no_post_non_authenticated (cenpilos.tests.tests_views.TestLikingPost)
+Sends a like request from a non-authenticated user with no posts
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 436, in test_likePost_no_post_non_authenticated
+    self.assertEquals(response.status_code, 403)
+AssertionError: 404 != 403
+
+======================================================================
+FAIL: test_likePost_post_like_own_post_multiple_times_authenticated (cenpilos.tests.tests_views.TestLikingPost)
+Sends multiple like requests from an authenticated user to their own posts
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 515, in test_likePost_post_like_own_post_multiple_times_authenticated
+    self.assertEquals(p.total_likes, 0)
+AssertionError: 1 != 0
+
+======================================================================
+FAIL: test_likePost_post_like_own_post_once_authenticated (cenpilos.tests.tests_views.TestLikingPost)
+Sends one like request from an authenticated user to their own posts
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 499, in test_likePost_post_like_own_post_once_authenticated
+    self.assertEquals(first_post[0].total_likes, 0)
+AssertionError: 1 != 0
+
+======================================================================
+FAIL: test_addFriend_themselves_authenticated (cenpilos.tests.tests_views.TestProfilePage)
+Adds a friend but the user is themselves
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 619, in test_addFriend_themselves_authenticated
+    self.assertEquals(autotest_userProfile[0].total_friends, 0)
+AssertionError: 1 != 0
+
+----------------------------------------------------------------------
+Ran 57 tests in 17.666s
+
+FAILED (failures=4, errors=9)
+Destroying test database for alias 'default'...
+System check identified no issues (0 silenced).

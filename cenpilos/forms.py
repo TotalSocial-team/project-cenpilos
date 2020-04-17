@@ -43,7 +43,8 @@ class PostForm(forms.ModelForm):
         widget=forms.Textarea(
             attrs={'placeholder': 'What\'s on your mind?',
                    'rows': 4,
-                   'class': 'form-control-lg'}),
+                   'class': 'form-control-lg',
+                   'id':'post-content'}),
         label='')
 
 

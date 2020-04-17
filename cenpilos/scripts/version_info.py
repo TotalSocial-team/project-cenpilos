@@ -16,4 +16,4 @@ def version_information() -> List[str]:
         # splits the lines or splits the data at the \n character
         lines = notes.read().splitlines()
 
-    return [lines[0], lines[1] , lines[2], lines[3]]
+    return [lines[0], lines[1], lines[2], lines[3]]

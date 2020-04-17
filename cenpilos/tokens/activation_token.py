@@ -1,6 +1,6 @@
 # creates the tokens used for the confirmation email
+import six
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils import six
 
 
 class TokenGenerator(PasswordResetTokenGenerator):
