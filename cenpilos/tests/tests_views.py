@@ -497,12 +497,12 @@ class TestProfileFunctions(Setup):
         self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
 
     # this test case is temporarily omitted
-    # def test_visit_profile_non_existent_invalid_characters_unauthenticated(self):
-    #     """
-    #     Visits a user profile page that has invalid characters as the argument
-    #     """
-    #     response = self.client.get(reverse('profile', args=['doest_@3j3i_3!!']), follow=True)
-    #     self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
+    def test_visit_profile_non_existent_invalid_characters_unauthenticated(self):
+        """
+        Visits a user profile page that has invalid characters as the argument
+        """
+        response = self.client.get(reverse('profile', args=['doest_@3j3i_3!!']), follow=True)
+        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
 
     def test_addFriend_user_non_authenticated(self):
         """
