@@ -53,7 +53,10 @@ def get_request(request):
 def post_request(request):
     # Double checks to ensure the request method is POST
     if request.is_ajax():
+        if not request.user.is_authenticated:
+            return redirect('login')
         # passes the post form with the filled in data for validation
         form = PostForm(request.POST)
 
         return save_post(request, form)
+    return redirect('dashboard')

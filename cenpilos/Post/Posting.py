@@ -1,9 +1,9 @@
-from django.utils import timezone
 from itertools import chain
 from typing import List
 
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 from cenpilos.forms import PostForm
 from cenpilos.models import Post, UserProfile
@@ -33,7 +33,6 @@ def save_post(request, form: PostForm) -> JsonResponse:
 
 
 def retrieve_posts_for_feed(request) -> List[object]:
-
     # retrieve the post data
     user_posts = Post.objects.filter(author=request.user).all()
 
@@ -55,6 +54,8 @@ def like_pPost(request):
 
     if request.user in post.likes.all():
         return JsonResponse({}, status=400)
+    elif post.author == request.user:
+        return JsonResponse({})
     else:
         post.likes.add(request.user)
         post.save()
@@ -74,6 +75,11 @@ def dislike_pPost(request):
 
 
 def delete(request):
+    all_posts = [p for p in list(Post.objects.all())]
+    logged_in_user_posts = [p for p in list(Post.objects.filter(author=request.user).all())]
+
     post = get_object_or_404(Post, id=request.POST.get('post_id'))
+    if (post in all_posts and post not in logged_in_user_posts):
+        return JsonResponse({}, status=403)
     post.delete()
     return JsonResponse({})

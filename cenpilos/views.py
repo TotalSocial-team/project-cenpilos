@@ -1,15 +1,14 @@
-from django.shortcuts import redirect, render
-
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.shortcuts import render
 from django.views.generic import *
 
 from .BetaUserLogin.login_beta import login_beta_user
 from .Dashboard.dashbaord_requests import get_request, post_request
 from .Notifications.notification_requests import notifications_get_request
 from .Post.Posting import *
-from .Profiles.profile_requests import *
 from .Profiles.ProfileFunctions import add_friend_profile, remove_friend_profile
+from .Profiles.profile_requests import *
 from .forms import *
+
 
 # activation account --- user must verify their account before they will be allowed to sign in!
 # def activate(request, uidb64, token):
@@ -151,6 +150,8 @@ class DashboardView(View):
         Processes the post request of the main page.
         """
         # TODO: account for authentication requirement
+        if not request.user.is_authenticated:
+            return redirect('login')
         return post_request(request)
 
 
@@ -164,18 +165,20 @@ class ProfileView(View):
         """
         Processes the get request for the main page.
         """
-
+        # TODO: fix ReverseMatcher Bug
         if not request.user.is_authenticated:
+            # raise NoReverseMatch
             return redirect('login')
         else:
             return render(request, self.template_name, profile_get_request(request, username))
 
-    def post(self, request, *args, **kwargs):
-        """
-        Processes the post request of the main page.
-        """
 
-        return render(request, self.template_name, profile_post_request(request))
+def post(self, request, *args, **kwargs):
+    """
+    Processes the post request of the main page.
+    """
+
+    return render(request, self.template_name, profile_post_request(request))
 
 
 class NotificationView(View):
@@ -205,7 +208,8 @@ class NotificationView(View):
 # VIEW FUNCTIONS #
 def like_post(request):
     """ handles the liking of a post"""
-
+    if not request.user.is_authenticated:
+        return redirect('login')
     return like_pPost(request)
 
 
@@ -217,6 +221,8 @@ def dislike_post(request):
 
 def delete_post(request):
     """ Handles the deletion of a post """
+    if not request.user.is_authenticated:
+        return redirect('login')
 
     return delete(request)
 
@@ -229,8 +235,14 @@ def login_beta(request):
 
 def add_friend(request, username):
     """ Handle an addition of a friend """
-
-    return add_friend_profile(request, username)
+    try:
+        if not request.user.is_authenticated:
+            return redirect('login')
+        else:
+            return add_friend_profile(request, username)
+    except BaseException:
+        if not request.user.is_authenticated:
+            return redirect('login')
 
 
 def remove_friend(request, username):

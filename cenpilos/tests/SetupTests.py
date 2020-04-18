@@ -28,7 +28,7 @@ class Setup(TestCase):
         self.autotesting.set_password(self.password)
         self.autotesting.save()
 
-        self.autotesting_username = "autotesting_friend"
+        self.autotesting_username = "autotestingFriend"
         self.autotesting_friend = User.objects.create(
             email="autotestfriend@cenpilos.tech",
             username=self.autotesting_username
