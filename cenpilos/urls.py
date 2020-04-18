@@ -33,16 +33,16 @@ urlpatterns = [
     path('login-beta/', login_beta, name='login-beta'),
 
     # profile page
-    url(r'profile/(?P<username>[a-zA-Z0-9]+|)$',  ProfileView.as_view(), name='profile'),
+    re_path(r'profile/(?P<username>[a-zA-Z0-9]+|)',  ProfileView.as_view(), name='profile'),
 
     # notifications
     path('notifications/', NotificationView.as_view(), name='notifications'),
 
     # friend addition lol -- I wish this was this easy in real life :(
-    url(r'add_friend/(?P<username>[a-zA-Z0-9]+)', add_friend, name='add_friend'),
+    re_path(r'add_friend/(?P<username>[a-zA-Z0-9]+|)', add_friend, name='add_friend'),
 
     # friend deletion LOL -- I wish deleting people that USE me like this :(
-    url(r'remove_friend/(?P<username>[a-zA-Z0-9]+)', remove_friend, name='remove_friend'),
+    re_path(r'remove_friend/(?P<username>[a-zA-Z0-9]+|)', remove_friend, name='remove_friend'),
 
     # # activation
     # re_path(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', activate,

@@ -1,21 +1,8 @@
 Creating test database for alias 'default'...
-............................................................E.
-======================================================================
-ERROR: test_visit_profile_non_existent_invalid_characters_unauthenticated (cenpilos.tests.tests_views.TestProfileFunctions)
-Visits a user profile page that has invalid characters as the argument
+................................................................
 ----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 504, in test_visit_profile_non_existent_invalid_characters_unauthenticated
-    response = self.client.get(reverse('profile', args=['doest_@3j3i_3!!']), follow=True)
-  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\urls\base.py", line 87, in reverse
-    return iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
-  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\urls\resolvers.py", line 677, in _reverse_with_prefix
-    raise NoReverseMatch(msg)
-django.urls.exceptions.NoReverseMatch: Reverse for 'profile' with arguments '('doest_@3j3i_3!!',)' not found. 1 pattern(s) tried: ['profile/(?P<username>[a-zA-Z0-9]+|)$']
+Ran 64 tests in 21.257s
 
-----------------------------------------------------------------------
-Ran 62 tests in 24.908s
-
-FAILED (errors=1)
+OK
 Destroying test database for alias 'default'...
 System check identified no issues (0 silenced).

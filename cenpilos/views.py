@@ -8,7 +8,7 @@ from .Post.Posting import *
 from .Profiles.ProfileFunctions import add_friend_profile, remove_friend_profile
 from .Profiles.profile_requests import *
 from .forms import *
-
+from .Profiles.ProfileFunctions import userExists
 
 # activation account --- user must verify their account before they will be allowed to sign in!
 # def activate(request, uidb64, token):
@@ -36,7 +36,7 @@ class RegisterView(View):
     """
     Registration View
     """
-    template_name = 'cenpilos/auth/pages/register.html'  # TODO: Create this template
+    template_name = 'cenpilos/auth/pages/register.html'
 
     def get(self, request, *args, **kwargs):
         """
@@ -101,7 +101,6 @@ class RegisterView(View):
                 # subject = 'Activate your account with Practice Logger -- A service by Cenpilos Public.'
                 # html_message = loader.render_to_string(
                 #     'cenpilos/email/confirm_email_address.html',
-                #     # TODO: Change the logo of the email template!
                 #     {
                 #         'username': username,
                 #         'email_address': email,
@@ -116,7 +115,7 @@ class RegisterView(View):
                 # messages.warning(request, f'Before you can start using your account, you must'
                 #                           f'verify your email before being able to login.')
                 # # Redirects the user to the login page
-                return redirect('login')  # TODO: add 'login' to your urls.py file
+                return redirect('login')
         else:
             # if nothing was done
             form = RegistrationForm()
@@ -149,7 +148,6 @@ class DashboardView(View):
         """
         Processes the post request of the main page.
         """
-        # TODO: account for authentication requirement
         if not request.user.is_authenticated:
             return redirect('login')
         return post_request(request)
@@ -165,20 +163,24 @@ class ProfileView(View):
         """
         Processes the get request for the main page.
         """
-        # TODO: fix ReverseMatcher Bug
-        if not request.user.is_authenticated:
-            # raise NoReverseMatch
-            return redirect('login')
-        else:
-            return render(request, self.template_name, profile_get_request(request, username))
+        try:
+            if not request.user.is_authenticated:
+                # raise NoReverseMatch
+                return redirect('login')
+            else:
+                return render(request, self.template_name, profile_get_request(request, username))
+        except BaseException:
+            if not request.user.is_authenticated:
+                return redirect('login')
+            if not userExists(username):
+                return JsonResponse({}, status=404)
 
+    def post(self, request, *args, **kwargs):
+        """
+        Processes the post request of the main page.
+        """
 
-def post(self, request, *args, **kwargs):
-    """
-    Processes the post request of the main page.
-    """
-
-    return render(request, self.template_name, profile_post_request(request))
+        return render(request, self.template_name, profile_post_request(request))
 
 
 class NotificationView(View):

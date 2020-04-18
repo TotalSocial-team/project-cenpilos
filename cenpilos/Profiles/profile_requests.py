@@ -12,6 +12,7 @@ from cenpilos.scripts import version_info
 
 def profile_get_request(request, username):
     try:
+
         form = PostForm()
 
         # version information

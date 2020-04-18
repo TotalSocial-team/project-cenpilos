@@ -496,7 +496,6 @@ class TestProfileFunctions(Setup):
         response = self.client.get(reverse('profile', args=['doesnotexist']), follow=True)
         self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
 
-    # this test case is temporarily omitted
     def test_visit_profile_non_existent_invalid_characters_unauthenticated(self):
         """
         Visits a user profile page that has invalid characters as the argument
@@ -506,7 +505,7 @@ class TestProfileFunctions(Setup):
 
     def test_addFriend_user_non_authenticated(self):
         """
-        Adds a friend without loggin in
+        Adds a friend without logging in
         """
         response = self.client.get(reverse('add_friend', args=['doesnotexist']), follow=True)
         self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
@@ -530,6 +529,26 @@ class TestProfileFunctions(Setup):
         self.assertEquals(response.status_code, 200)
         self.assertIsInstance(response.context['form'], PostForm)
         self.assertTemplateUsed(response, self.base_template_name + self.profile_name)
+        self.client.logout()
+
+    def test_visit_profile_non_existent_invalid_characters_authenticated(self):
+        """
+        Visits a user profile page that has invalid characters as the argument (authenticated)
+        """
+        self.client.login(username=self.username, password=self.password)
+
+        response = self.client.get(reverse('profile', args=['doest_@3j3i_3!!']), follow=True)
+        self.assertEquals(response.status_code, 404)
+        self.client.logout()
+
+    def test_visit_profile_non_existent_valid_characters_authenticated(self):
+        """
+        Visits a user profile page which corresponds to a non-existent user (authenticated)
+        """
+        self.client.login(username=self.username, password=self.password)
+
+        response = self.client.get(reverse('profile', args=['doesnotexist']), follow=True)
+        self.assertEquals(response.status_code, 404)
         self.client.logout()
 
     def test_addFriend_no_user_authenticated(self):
