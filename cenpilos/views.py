@@ -249,5 +249,11 @@ def add_friend(request, username):
 
 def remove_friend(request, username):
     """ Handles the deletion of a friend """
-
-    return remove_friend_profile(request, username)
+    try:
+        if not request.user.is_authenticated:
+            return redirect('login')
+        else:
+            return remove_friend_profile(request, username)
+    except BaseException:
+        if not request.user.is_authenticated:
+            return redirect('login')

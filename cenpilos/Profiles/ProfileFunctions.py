@@ -29,7 +29,6 @@ def userExists(username) -> bool:
 
 def add_friend_profile(request, username):
     # search for the user that has username
-
     if not userExists(username):
         return JsonResponse({}, status=404)
     if username == request.user.username:
@@ -51,6 +50,10 @@ def add_friend_profile(request, username):
 
 def remove_friend_profile(request, username):
     # search for the user that has username
+    if not userExists(username):
+        return JsonResponse({}, status=404)
+    if username == request.user.username:
+        return JsonResponse({})
     username_param = User.objects.get(username=username)
 
     # adds the friends

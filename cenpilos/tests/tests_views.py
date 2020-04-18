@@ -487,111 +487,6 @@ class TestLikePost(SetupPosts):
         self.client.logout()
 
 
-class TestProfileFunctions(Setup):
-
-    def test_visit_profile_non_existent_unauthenticated(self):
-        """
-        Visits a user profile that does not exist without logging in
-        """
-        response = self.client.get(reverse('profile', args=['doesnotexist']), follow=True)
-        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
-
-    def test_visit_profile_non_existent_invalid_characters_unauthenticated(self):
-        """
-        Visits a user profile page that has invalid characters as the argument
-        """
-        response = self.client.get(reverse('profile', args=['doest_@3j3i_3!!']), follow=True)
-        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
-
-    def test_addFriend_user_non_authenticated(self):
-        """
-        Adds a friend without logging in
-        """
-        response = self.client.get(reverse('add_friend', args=['doesnotexist']), follow=True)
-        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
-
-    def test_addFriend_user_invalid_characters_non_authenticated(self):
-        """
-        Adds a friend without loggin in with a username containing invalid characters
-        """
-        response = self.client.get(reverse('add_friend', args=['doest_@3j3i_3!!']), follow=True)
-        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
-
-    def test_visit_own_profile_page_authenticated(self):
-        """
-        Visit your own profile page while you are authenticated
-        """
-        self.client.login(username=self.username, password=self.password)
-        # loophole: create a profile page
-        self.client.get(reverse('dashboard'), follow=True)
-
-        response = self.client.get(reverse('profile', args=[self.username]), follow=True)
-        self.assertEquals(response.status_code, 200)
-        self.assertIsInstance(response.context['form'], PostForm)
-        self.assertTemplateUsed(response, self.base_template_name + self.profile_name)
-        self.client.logout()
-
-    def test_visit_profile_non_existent_invalid_characters_authenticated(self):
-        """
-        Visits a user profile page that has invalid characters as the argument (authenticated)
-        """
-        self.client.login(username=self.username, password=self.password)
-
-        response = self.client.get(reverse('profile', args=['doest_@3j3i_3!!']), follow=True)
-        self.assertEquals(response.status_code, 404)
-        self.client.logout()
-
-    def test_visit_profile_non_existent_valid_characters_authenticated(self):
-        """
-        Visits a user profile page which corresponds to a non-existent user (authenticated)
-        """
-        self.client.login(username=self.username, password=self.password)
-
-        response = self.client.get(reverse('profile', args=['doesnotexist']), follow=True)
-        self.assertEquals(response.status_code, 404)
-        self.client.logout()
-
-    def test_addFriend_no_user_authenticated(self):
-        """
-        Adds a friend while logged in but the username does not exist
-        """
-        self.client.login(username=self.username, password=self.password)
-        response = self.client.get(reverse('add_friend', args=['doesnotexist']), follow=True)
-        self.assertEquals(response.status_code, 404)
-        self.client.logout()
-
-    def test_addFriend_themselves_authenticated(self):
-        """
-        Adds a friend but the user is themselves
-        """
-        self.client.login(username=self.username, password=self.password)
-        self.client.get(reverse('dashboard'), follow=True)
-        response = self.client.get(reverse('add_friend', args=[self.username]), follow=True)
-
-        self.assertEquals(response.status_code, 200)
-        # get the UserProfile of that user
-        autotest_userProfile = list(
-            UserProfile.objects.filter(user=self.autotesting).all())
-        # the current user CANNOT friend themselves!
-        self.assertEquals(autotest_userProfile[0].total_friends, 0)
-        self.client.logout()
-
-    def test_addFriend_another_user_valid_user_authenticated(self):
-        """
-        Adds a friend but the user is NOT the current logged in user
-        """
-        self.client.login(username=self.username, password=self.password)
-        self.client.get(reverse('dashboard'), follow=True)
-        response = self.client.get(reverse('add_friend', args=[self.autotesting_username]), follow=True)
-
-        self.assertEquals(response.status_code, 200)
-        # get the UserProfile of that user
-        autotest_userProfile = list(
-            UserProfile.objects.filter(user=self.autotesting).all())
-        self.assertEquals(autotest_userProfile[0].total_friends, 1)
-        self.client.logout()
-
-
 class TestDeletePost(SetupPosts):
 
     def setUp(self) -> None:
@@ -661,4 +556,169 @@ class TestDeletePost(SetupPosts):
         # send a delete request
         response = self.client.post(reverse('delete_post'), {'post_id': post_id}, follow=True)
         self.assertEquals(response.status_code, 200)
+        self.client.logout()
+
+
+class TestProfileFunctions(Setup):
+
+    def test_visit_profile_non_existent_unauthenticated(self):
+        """
+        Visits a user profile that does not exist without logging in
+        """
+        response = self.client.get(reverse('profile', args=['doesnotexist']), follow=True)
+        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
+
+    def test_visit_profile_non_existent_invalid_characters_unauthenticated(self):
+        """
+        Visits a user profile page that has invalid characters as the argument
+        """
+        response = self.client.get(reverse('profile', args=['doest_@3j3i_3!!']), follow=True)
+        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
+
+    def test_addFriend_user_non_authenticated(self):
+        """
+        Adds a friend without logging in
+        """
+        response = self.client.get(reverse('add_friend', args=['doesnotexist']), follow=True)
+        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
+
+    def test_addFriend_user_invalid_characters_non_authenticated(self):
+        """
+        Adds a friend without loggin in with a username containing invalid characters
+        """
+        response = self.client.get(reverse('add_friend', args=['doest_@3j3i_3!!']), follow=True)
+        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
+
+    def test_removeFriend_user_non_existent_non_authenticated(self):
+        """
+        Removes a friend without logging in
+        """
+        response = self.client.get(reverse('remove_friend', args=['doesnotexist']), follow=True)
+        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
+
+    def test_removeFriend_user_invalid_characters_non_authenticated(self):
+        """
+        Removes a friend without loggin in with a username containing invalid characters
+        """
+        response = self.client.get(reverse('remove_friend', args=['doest_@3j3i_3!!']), follow=True)
+        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
+
+    def test_visit_own_profile_page_authenticated(self):
+        """
+        Visit your own profile page while you are authenticated
+        """
+        self.client.login(username=self.username, password=self.password)
+        # loophole: create a profile page
+        self.client.get(reverse('dashboard'), follow=True)
+
+        response = self.client.get(reverse('profile', args=[self.username]), follow=True)
+        self.assertEquals(response.status_code, 200)
+        self.assertIsInstance(response.context['form'], PostForm)
+        self.assertTemplateUsed(response, self.base_template_name + self.profile_name)
+        self.client.logout()
+
+    def test_visit_profile_non_existent_invalid_characters_authenticated(self):
+        """
+        Visits a user profile page that has invalid characters as the argument (authenticated)
+        """
+        self.client.login(username=self.username, password=self.password)
+
+        response = self.client.get(reverse('profile', args=['doest_@3j3i_3!!']), follow=True)
+        self.assertEquals(response.status_code, 404)
+        self.client.logout()
+
+    def test_visit_profile_non_existent_valid_characters_authenticated(self):
+        """
+        Visits a user profile page which corresponds to a non-existent user (authenticated)
+        """
+        self.client.login(username=self.username, password=self.password)
+
+        response = self.client.get(reverse('profile', args=['doesnotexist']), follow=True)
+        self.assertEquals(response.status_code, 404)
+        self.client.logout()
+
+    def test_addFriend_no_user_authenticated(self):
+        """
+        Adds a friend while logged in but the username does not exist
+        """
+        self.client.login(username=self.username, password=self.password)
+        response = self.client.get(reverse('add_friend', args=['doesnotexist']), follow=True)
+        self.assertEquals(response.status_code, 404)
+        self.client.logout()
+
+    def test_addFriend_non_existent_invalid_characters_authenticated(self):
+        """
+        Adds a friend while logged in but username has invalid characters as the argument (authenticated)
+        """
+        self.client.login(username=self.username, password=self.password)
+
+        response = self.client.get(reverse('add_friend', args=['doest_@3j3i_3!!']), follow=True)
+        self.assertEquals(response.status_code, 404)
+        self.client.logout()
+
+    def test_addFriend_themselves_authenticated(self):
+        """
+        Adds a friend but the user is themselves
+        """
+        self.client.login(username=self.username, password=self.password)
+        self.client.get(reverse('dashboard'), follow=True)
+        response = self.client.get(reverse('add_friend', args=[self.username]), follow=True)
+
+        self.assertEquals(response.status_code, 200)
+        # get the UserProfile of that user
+        autotest_userProfile = list(
+            UserProfile.objects.filter(user=self.autotesting).all())
+        # the current user CANNOT friend themselves!
+        self.assertEquals(autotest_userProfile[0].total_friends, 0)
+        self.client.logout()
+
+    def test_addFriend_another_user_valid_user_authenticated(self):
+        """
+        Adds a friend but the user is NOT the current logged in user
+        """
+        self.client.login(username=self.username, password=self.password)
+        self.client.get(reverse('dashboard'), follow=True)
+        response = self.client.get(reverse('add_friend', args=[self.autotesting_username]), follow=True)
+
+        self.assertEquals(response.status_code, 200)
+        # get the UserProfile of that user
+        autotest_userProfile = list(
+            UserProfile.objects.filter(user=self.autotesting).all())
+        self.assertEquals(autotest_userProfile[0].total_friends, 1)
+        self.assertIn(self.autotesting_friend, list(autotest_userProfile[0].friends.all()))
+        self.client.logout()
+
+    def test_removeFriend_non_existent_invalid_characters_authenticated(self):
+        """
+        Removes a friend while logged in but username has invalid characters as the argument (authenticated)
+        """
+        self.client.login(username=self.username, password=self.password)
+
+        response = self.client.get(reverse('remove_friend', args=['doest_@3j3i_3!!']), follow=True)
+        self.assertEquals(response.status_code, 404)
+        self.client.logout()
+
+    def test_removeFriend_no_user_exists_authenticated(self):
+        """
+        Removes a friend while logged in but the username does not exist in friend list
+        """
+        self.client.login(username=self.username, password=self.password)
+        response = self.client.get(reverse('remove_friend', args=['doesnotexist']), follow=True)
+        self.assertEquals(response.status_code, 404)
+        self.client.logout()
+
+    def test_removeFriend_user_exists_authenticated(self):
+        """
+        Renmoves a friend which exists in the friend list
+        """
+        self.client.login(username=self.username, password=self.password)
+        self.client.get(reverse('dashboard'), follow=True)
+        self.client.get(reverse('add_friend', args=[self.autotesting_username]), follow=True)
+        response = self.client.get(reverse('remove_friend', args=[self.autotesting_username]), follow=True)
+        self.assertEquals(response.status_code, 200)
+        # get the UserProfile of that user
+        autotest_userProfile = list(
+            UserProfile.objects.filter(user=self.autotesting).all())
+        self.assertEquals(autotest_userProfile[0].total_friends, 0)
+        self.assertNotIn(self.autotesting_friend, list(autotest_userProfile[0].friends.all()))
         self.client.logout()
