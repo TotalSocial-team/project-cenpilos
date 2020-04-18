@@ -15,71 +15,13 @@ ALL FEATURES WILL BE tested to make sure everything is correct DURING every beta
 Copyright (c) Zhaoyu Guo 2020. All rights reserved.
 """
 
-from django.test import Client
-from django.test import TestCase
-from django.urls import reverse
-from django.utils import timezone
 import random
 
+from django.test import Client
+from django.urls import reverse
+
 from cenpilos.forms import *
-
-
-class Setup(TestCase):
-    def setUp(self) -> None:
-        """
-        This is NOT a test case. This is to setup the required
-        testing details
-
-        NOTE: The details ARE NOT accessible from the website
-        """
-        self.username = "autotesting"
-        self.autotesting = User.objects.create(
-            email="autotest@cenpilos.tech",
-            username=self.username
-        )
-
-        self.password = "autotesting123@"
-        self.autotesting.set_password(self.password)
-        self.autotesting.save()
-
-        self.autotesting_username = "autotesting_friend"
-        self.autotesting_friend = User.objects.create(
-            email="autotestfriend@cenpilos.tech",
-            username=self.autotesting_username
-        )
-
-        self.friend_password = "autotesting123friend@"
-        self.autotesting_friend.set_password(self.friend_password)
-        self.autotesting_friend.save()
-
-        self.base_template_name = "cenpilos/dashboard/pages/"
-        self.notification_name = 'notifications.html'
-        self.dashboard_name = 'index.html'
-        self.profile_name = 'profile.html'
-
-        # friend posts
-        five_posts = ["This is made by the autotester # 1", "Post # 2",
-                      "Post # 3", "Post # 4", "Post # 5"]
-
-        for post in five_posts:
-            autotesting_friend_post = Post.objects.create(
-                content=post,
-                author=self.autotesting_friend,
-                date=timezone.now()
-            )
-            autotesting_friend_post.save()
-
-        # own posts
-        five_posts = ["This is made by the autotester # 2", "Post # 2",
-                      "Post # 3", "Post # 876", "Post # 4"]
-
-        for post in five_posts:
-            autotesting_post = Post.objects.create(
-                content=post,
-                author=self.autotesting,
-                date=timezone.now()
-            )
-            autotesting_post.save()
+from .SetupTests import *
 
 
 class TestDashboard(Setup):
@@ -418,7 +360,7 @@ class TestNotifications(Setup):
         self.assertEquals(response.context["user"].username, self.username)
 
 
-class TestLikePost(Setup):
+class TestLikePost(SetupPosts):
 
     def test_likePost_no_post_non_authenticated(self):
         """
@@ -629,7 +571,7 @@ class TestProfileFunctions(Setup):
         self.client.logout()
 
 
-class TestDeletePost(Setup):
+class TestDeletePost(SetupPosts):
 
     def setUp(self) -> None:
         """
@@ -644,7 +586,6 @@ class TestDeletePost(Setup):
         self.all_post_ids = [p.id for p in self.all_posts]
         self.autoesting_post_ids = [p.id for p in self.autoesting_posts]
         self.autotesting_friend_post_ids = [p.id for p in self.autotesting_friend_posts]
-
 
     def test_delete_post_no_post_unauthenticated(self):
         """
@@ -700,4 +641,3 @@ class TestDeletePost(Setup):
         response = self.client.post(reverse('delete_post'), {'post_id': post_id}, follow=True)
         self.assertEquals(response.status_code, 200)
         self.client.logout()
-

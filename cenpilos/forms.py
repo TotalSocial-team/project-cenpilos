@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.core.validators import validate_email
-from django.contrib.auth.models import User
+
 from .models import *  # imports all of the models -- no need to say models.<model name>
 
 
@@ -44,9 +43,8 @@ class PostForm(forms.ModelForm):
             attrs={'placeholder': 'What\'s on your mind?',
                    'rows': 4,
                    'class': 'form-control-lg',
-                   'id':'post-content'}),
+                   'id': 'post-content'}),
         label='')
-
 
     # saves the data to the Posts model
     class Meta:
