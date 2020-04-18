@@ -386,7 +386,7 @@ class TestLikePost(SetupPosts):
 
     def test_likePost_post_like_post_non_authenticated(self):
         """
-        Sends a post request to posts when you are non-authenticated with posts queried
+        Sends a like request to posts when you are non-authenticated with posts queried
         """
 
         # find post
@@ -483,6 +483,139 @@ class TestLikePost(SetupPosts):
 
             self.assertEquals(response.status_code, 200)
             self.assertEquals(friend_post.total_likes, 1)
+
+        self.client.logout()
+
+
+class TestDisLikePost(SetupPosts):
+
+    def test_DislikePost_no_post_non_authenticated(self):
+        """
+        Sends a dislike request from a non-authenticated user with no posts
+        """
+
+        response = self.client.post(reverse('dislike_post'), {'post_id': 2334}, follow=True)
+
+        self.assertEquals(response.status_code, 200)
+        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
+
+    def test_DislikePost_no_post_queried_authenticated(self):
+        """
+        Sends a like request from an authenticated user with no posts queried
+        """
+        id = 1111
+        self.client.login(username=self.username, password=self.password)
+
+        response = self.client.post(reverse('dislike_post'), {'post_id': id}, follow=True)
+
+        self.assertEquals(response.status_code, 404)
+        self.client.logout()
+
+    def test_DislikePost_post_like_post_non_authenticated(self):
+        """
+        Sends a dislike request to posts when you are non-authenticated with posts queried
+        """
+
+        # find post
+        first_post = Post.objects.filter(author=self.autotesting, content="This is made by the autotester # 2").all()
+
+        first_post = list(first_post)
+
+        post_id = int(first_post[0].id)
+        self.client.post(reverse('like_post'), {'post_id': post_id}, follow=True)
+        response = self.client.post(reverse('dislike_post'), {'post_id': post_id}, follow=True)
+
+        # the user CANNOT like a post when they are logged out
+        self.assertEquals(response.status_code, 200)
+        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
+
+    def test_DislikePost_post_non_existent_authenticated(self):
+        """
+        Sends a dislike request from an authenticated user with posts created but none of them match post_id
+        """
+        post_id = 223
+
+        self.client.login(username=self.username, password=self.password)
+
+        user_post = Post.objects.filter(author=self.autotesting).all()
+
+        # check to make sure none of them match
+        for post in user_post:
+            self.assertFalse(post.id == post_id)
+
+        self.client.post(reverse('like_post'), {'post_id': post_id}, follow=True)
+        response = self.client.post(reverse('dislike_post'), {'post_id': post_id}, follow=True)
+
+        self.assertEquals(response.status_code, 404)
+
+    def test_DislikePost_post_dislike_own_post_once_authenticated(self):
+        """
+        Sends one dislike request from an authenticated user to their own posts
+        """
+        self.client.login(username=self.username, password=self.password)
+
+        first_post = list(
+            Post.objects.filter(author=self.autotesting, content="This is made by the autotester # 2").all())
+
+        self.client.post(reverse('like_post'), {'post_id': int(first_post[0].id)}, follow=True)
+
+        response = self.client.post(reverse('dislike_post'), {'post_id': int(first_post[0].id)}, follow=True)
+
+        self.assertEquals(response.status_code, 400)
+        # The user SHOULD NOT be liking their own posts
+        self.assertEquals(first_post[0].total_likes, 0)
+        self.client.logout()
+
+    def test_DislikePost_post_dislike_own_post_multiple_times_authenticated(self):
+        """
+        Sends multiple dislike requests from an authenticated user to their own posts
+        """
+        self.client.login(username=self.username, password=self.password)
+
+        posts = list(
+            Post.objects.filter(author=self.autotesting).all())
+
+        for p in posts:
+            self.client.post(reverse('like_post'), {'post_id': int(p.id)}, follow=True)
+            response = self.client.post(reverse('dislike_post'), {'post_id': int(p.id)}, follow=True)
+            self.assertEquals(response.status_code, 400)
+            # The user SHOULD NOT be liking their own posts
+            self.assertEquals(p.total_likes, 0)
+
+        self.client.logout()
+
+    def test_DislikePost_post_dislike_friends_post_once_authenticated(self):
+        """
+        Sends a single dislike request from an authenticated user to another user's post
+        """
+        self.client.login(username=self.username, password=self.password)
+
+        friend_post = list(
+            Post.objects.filter(author=self.autotesting_friend, content="Post # 2").all())
+
+        self.client.post(reverse('like_post'), {'post_id': friend_post[0].id}, follow=True)
+        response = self.client.post(reverse('dislike_post'), {'post_id': friend_post[0].id}, follow=True)
+
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(friend_post[0].total_likes, 0)
+        self.client.logout()
+
+    def test_DislikePost_post_dislike_friends_post_multiple_times_authenticated(self):
+        """
+        Sends multiple dislike requests from an authenticated user to another user's post
+        """
+
+        self.client.login(username=self.username, password=self.password)
+
+        friend_posts = list(
+            Post.objects.filter(author=self.autotesting_friend).all())
+
+        for friend_post in friend_posts:
+            self.client.post(reverse('like_post'), {'post_id': friend_post.id}, follow=True)
+            response = self.client.post(reverse('dislike_post'), {'post_id': friend_post.id}, follow=True)
+
+            self.assertEquals(response.status_code, 200)
+            self.assertEquals(friend_post.total_likes, 0)
 
         self.client.logout()
 
@@ -682,10 +815,63 @@ class TestProfileFunctions(Setup):
 
         self.assertEquals(response.status_code, 200)
         # get the UserProfile of that user
-        autotest_userProfile = list(
-            UserProfile.objects.filter(user=self.autotesting).all())
-        self.assertEquals(autotest_userProfile[0].total_friends, 1)
-        self.assertIn(self.autotesting_friend, list(autotest_userProfile[0].friends.all()))
+        testing_userprofiles = list(
+            UserProfile.objects.all())
+        self.assertEquals(testing_userprofiles[0].total_friends, 1)
+        self.assertTrue(testing_userprofiles[0].total_friends == testing_userprofiles[1].total_friends)
+        self.assertIn(self.autotesting_friend, list(testing_userprofiles[0].friends.all()))
+        self.client.logout()
+
+    def test_addFriend_already_exists_multiple_authenticated(self):
+        """
+        Adds a friend but the username of that friend already exists as a friend
+        """
+        self.client.login(username=self.username, password=self.password)
+        self.client.get(reverse('dashboard'), follow=True)
+        self.client.get(reverse('add_friend', args=[self.autotesting_username]), follow=True)
+        response = self.client.get(reverse('add_friend', args=[self.autotesting_username]), follow=True)
+
+        self.assertEquals(response.status_code, 200)
+        testing_userprofiles = list(
+            UserProfile.objects.all())
+        self.assertEquals(testing_userprofiles[0].total_friends, 1)
+        self.assertTrue(testing_userprofiles[0].total_friends == testing_userprofiles[1].total_friends)
+        self.assertIn(self.autotesting_friend, list(testing_userprofiles[0].friends.all()))
+        self.client.logout()
+
+    def test_addFriend_multiple_friends_authenticated(self):
+        """
+        Addds multiple friends
+        """
+        self.client.login(username=self.username, password=self.password)
+
+        # create two adtional user objects
+        additional_user1 = User.objects.create(
+            username="friend1"
+        )
+        additional_user1.set_password("password1")
+        additional_user1.save()
+
+        additional_user2 = User.objects.create(
+            username="friend2"
+        )
+        additional_user2.set_password("password2")
+        additional_user2.save()
+
+        self.client.get(reverse('dashboard'), follow=True)
+
+        friend1_response = self.client.get(reverse('add_friend', args=[additional_user1.username]), follow=True)
+        friend2_response = self.client.get(reverse('add_friend', args=[additional_user2.username]), follow=True)
+
+        self.assertTrue(friend1_response.status_code == 200 and friend2_response.status_code == 200)
+        testing_userprofiles = list(
+            UserProfile.objects.all())
+        self.assertEquals(testing_userprofiles[0].total_friends, 2)
+        self.assertTrue(testing_userprofiles[2].total_friends == testing_userprofiles[3].total_friends)
+        self.assertEquals(testing_userprofiles[2].total_friends, 1)
+        self.assertTrue(additional_user1 in list(testing_userprofiles[0].friends.all())
+                        and additional_user2 in list(testing_userprofiles[0].friends.all()))
+
         self.client.logout()
 
     def test_removeFriend_non_existent_invalid_characters_authenticated(self):
@@ -717,8 +903,82 @@ class TestProfileFunctions(Setup):
         response = self.client.get(reverse('remove_friend', args=[self.autotesting_username]), follow=True)
         self.assertEquals(response.status_code, 200)
         # get the UserProfile of that user
-        autotest_userProfile = list(
-            UserProfile.objects.filter(user=self.autotesting).all())
-        self.assertEquals(autotest_userProfile[0].total_friends, 0)
-        self.assertNotIn(self.autotesting_friend, list(autotest_userProfile[0].friends.all()))
+        testing_userprofiles = list(
+            UserProfile.objects.all())
+        self.assertEquals(testing_userprofiles[0].total_friends, 0)
+        self.assertTrue(testing_userprofiles[0].total_friends == testing_userprofiles[1].total_friends)
+        self.assertNotIn(self.autotesting_friend, list(testing_userprofiles[0].friends.all()))
+        self.client.logout()
+
+    def test_removeFriend_friends_exists_multiple_friends_authenticated(self):
+        """
+        Removes only one user from the friend list
+        """
+        self.client.login(username=self.username, password=self.password)
+
+        # create two adtional user objects
+        additional_user1 = User.objects.create(
+            username="friend1"
+        )
+        additional_user1.set_password("password1")
+        additional_user1.save()
+
+        additional_user2 = User.objects.create(
+            username="friend2"
+        )
+        additional_user2.set_password("password2")
+        additional_user2.save()
+
+        self.client.get(reverse('dashboard'), follow=True)
+        self.client.get(reverse('add_friend', args=[additional_user1.username]), follow=True)
+        self.client.get(reverse('add_friend', args=[additional_user2.username]), follow=True)
+
+        friend1_response = self.client.get(reverse('remove_friend', args=[additional_user1.username]), follow=True)
+
+        self.assertTrue(friend1_response.status_code == 200)
+        testing_userprofiles = list(
+            UserProfile.objects.all())
+        self.assertEquals(testing_userprofiles[0].total_friends, 1)
+        self.assertFalse(testing_userprofiles[2].total_friends == testing_userprofiles[3].total_friends)
+        self.assertEquals(testing_userprofiles[2].total_friends, 0)
+        self.assertFalse(additional_user1 in list(testing_userprofiles[0].friends.all())
+                         and additional_user2 in list(testing_userprofiles[0].friends.all()))
+
+        self.client.logout()
+
+    def test_removeFriend_multiple_friends_exists_authenticated(self):
+        """
+        Removes multiple friends that is in the friend list
+        """
+        self.client.login(username=self.username, password=self.password)
+
+        # create two adtional user objects
+        additional_user1 = User.objects.create(
+            username="friend1"
+        )
+        additional_user1.set_password("password1")
+        additional_user1.save()
+
+        additional_user2 = User.objects.create(
+            username="friend2"
+        )
+        additional_user2.set_password("password2")
+        additional_user2.save()
+
+        self.client.get(reverse('dashboard'), follow=True)
+        self.client.get(reverse('add_friend', args=[additional_user1.username]), follow=True)
+        self.client.get(reverse('add_friend', args=[additional_user2.username]), follow=True)
+
+        friend1_response = self.client.get(reverse('remove_friend', args=[additional_user1.username]), follow=True)
+        friend2_response = self.client.get(reverse('remove_friend', args=[additional_user2.username]), follow=True)
+
+        self.assertTrue(friend1_response.status_code == 200 and friend2_response.status_code == 200)
+        testing_userprofiles = list(
+            UserProfile.objects.all())
+        self.assertEquals(testing_userprofiles[0].total_friends, 0)
+        self.assertTrue(testing_userprofiles[2].total_friends == testing_userprofiles[3].total_friends)
+        self.assertEquals(testing_userprofiles[2].total_friends, 0)
+        self.assertFalse(additional_user1 in list(testing_userprofiles[0].friends.all())
+                         and additional_user2 in list(testing_userprofiles[0].friends.all()))
+
         self.client.logout()

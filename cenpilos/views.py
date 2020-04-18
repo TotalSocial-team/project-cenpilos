@@ -217,7 +217,8 @@ def like_post(request):
 
 def dislike_post(request):
     """ Handles the disliking of a post """
-
+    if not request.user.is_authenticated:
+        return redirect('login')
     return dislike_pPost(request)
 
 

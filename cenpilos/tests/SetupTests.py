@@ -38,6 +38,8 @@ class Setup(TestCase):
         self.autotesting_friend.set_password(self.friend_password)
         self.autotesting_friend.save()
 
+        # additional usernames
+
         self.base_template_name = "cenpilos/dashboard/pages/"
         self.notification_name = 'notifications.html'
         self.dashboard_name = 'index.html'
