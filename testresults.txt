@@ -1,11 +1,11 @@
 Creating test database for alias 'default'...
-.............................E......EE.F...FFE....EFEEEE.
+..........................FFFEFFFFFFEE..FF.FF...FFE..F.EFEEEEF
 ======================================================================
 ERROR: test_dashboard_POST_ajax_non_authenticated (cenpilos.tests.tests_views.TestDashboard)
 Sends an ajax POST request to an non-authenticated dashboard instance
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 91, in test_dashboard_POST_ajax_non_authenticated
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 115, in test_dashboard_POST_ajax_non_authenticated
     response = self.client.post(reverse('dashboard'), data, **{'HTTP_X_REQUESTED_WITH':
   File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 526, in post
     response = super().post(path, data=data, content_type=content_type, secure=secure, **extra)
@@ -33,14 +33,14 @@ Traceback (most recent call last):
     post.author = request.user
   File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\fields\related_descriptors.py", line 214, in __set__
     raise ValueError(
-ValueError: Cannot assign "<SimpleLazyObject: <django.contrib.auth.models.AnonymousUser object at 0x04F64D30>>": "Post.author" must be a "User" instance.
+ValueError: Cannot assign "<SimpleLazyObject: <django.contrib.auth.models.AnonymousUser object at 0x04D8ECD0>>": "Post.author" must be a "User" instance.
 
 ======================================================================
 ERROR: test_dashboard_POST_non_ajax_login_successful (cenpilos.tests.tests_views.TestDashboard)
 Sends a valid username and then a non-ajax POST request
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 129, in test_dashboard_POST_non_ajax_login_successful
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 168, in test_dashboard_POST_non_ajax_login_successful
     response = self.client.post(reverse('dashboard'), data)
   File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 526, in post
     response = super().post(path, data=data, content_type=content_type, secure=secure, **extra)
@@ -61,7 +61,7 @@ ERROR: test_dashboard_POST_non_ajax_non_authenticated (cenpilos.tests.tests_view
 Sends a non-ajax POST request to an non-authenticated dashboard instance
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 80, in test_dashboard_POST_non_ajax_non_authenticated
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 104, in test_dashboard_POST_non_ajax_non_authenticated
     response = client.post(reverse('dashboard'))
   File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 526, in post
     response = super().post(path, data=data, content_type=content_type, secure=secure, **extra)
@@ -78,7 +78,7 @@ Traceback (most recent call last):
 ValueError: The view cenpilos.views.DashboardView didn't return an HttpResponse object. It returned None instead.
 
 ======================================================================
-ERROR: test_likePost_post_like_post_non_authenticated (cenpilos.tests.tests_views.TestLikingPost)
+ERROR: test_likePost_post_like_post_non_authenticated (cenpilos.tests.tests_views.TestLikePost)
 Sends a post request to posts when you are non-authenticated with posts queried
 ----------------------------------------------------------------------
 Traceback (most recent call last):
@@ -89,7 +89,7 @@ TypeError: int() argument must be a string, a bytes-like object or a number, not
 The above exception was the direct cause of the following exception:
 
 Traceback (most recent call last):
-  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 463, in test_likePost_post_like_post_non_authenticated
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 457, in test_likePost_post_like_post_non_authenticated
     response = self.client.post(reverse('like_post'), {'post_id': post_id}, follow=True)
   File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 526, in post
     response = super().post(path, data=data, content_type=content_type, secure=secure, **extra)
@@ -137,14 +137,14 @@ Traceback (most recent call last):
     value = self.get_prep_value(value)
   File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\db\models\fields\__init__.py", line 1770, in get_prep_value
     raise e.__class__(
-TypeError: Field 'id' expected a number but got <SimpleLazyObject: <django.contrib.auth.models.AnonymousUser object at 0x05011430>>.
+TypeError: Field 'id' expected a number but got <SimpleLazyObject: <django.contrib.auth.models.AnonymousUser object at 0x04D65130>>.
 
 ======================================================================
-ERROR: test_addFriend_no_user_authenticated (cenpilos.tests.tests_views.TestProfilePage)
+ERROR: test_addFriend_no_user_authenticated (cenpilos.tests.tests_views.TestProfileFunctions)
 Adds a friend while logged in but the username does not exist
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 602, in test_addFriend_no_user_authenticated
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 596, in test_addFriend_no_user_authenticated
     response = self.client.get(reverse('add_friend', args=['doesnotexist']), follow=True)
   File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 518, in get
     response = super().get(path, data=data, secure=secure, **extra)
@@ -171,11 +171,11 @@ Traceback (most recent call last):
 django.contrib.auth.models.User.DoesNotExist: User matching query does not exist.
 
 ======================================================================
-ERROR: test_addFriend_user_invalid_characters_non_authenticated (cenpilos.tests.tests_views.TestProfilePage)
+ERROR: test_addFriend_user_invalid_characters_non_authenticated (cenpilos.tests.tests_views.TestProfileFunctions)
 Adds a friend without loggin in with a username containing invalid characters
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 580, in test_addFriend_user_invalid_characters_non_authenticated
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 574, in test_addFriend_user_invalid_characters_non_authenticated
     response = self.client.get(reverse('add_friend', args=['doest_@3j3i_3!!']), follow=True)
   File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 518, in get
     response = super().get(path, data=data, secure=secure, **extra)
@@ -202,11 +202,11 @@ Traceback (most recent call last):
 django.contrib.auth.models.User.DoesNotExist: User matching query does not exist.
 
 ======================================================================
-ERROR: test_addFriend_user_non_authenticated (cenpilos.tests.tests_views.TestProfilePage)
+ERROR: test_addFriend_user_non_authenticated (cenpilos.tests.tests_views.TestProfileFunctions)
 Adds a friend without loggin in
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 573, in test_addFriend_user_non_authenticated
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 567, in test_addFriend_user_non_authenticated
     response = self.client.get(reverse('add_friend', args=['doesnotexist']), follow=True)
   File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 518, in get
     response = super().get(path, data=data, secure=secure, **extra)
@@ -233,11 +233,11 @@ Traceback (most recent call last):
 django.contrib.auth.models.User.DoesNotExist: User matching query does not exist.
 
 ======================================================================
-ERROR: test_visit_own_profile_page_authenticated (cenpilos.tests.tests_views.TestProfilePage)
+ERROR: test_visit_own_profile_page_authenticated (cenpilos.tests.tests_views.TestProfileFunctions)
 Visit your own profile page while you are authenticated
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 591, in test_visit_own_profile_page_authenticated
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 585, in test_visit_own_profile_page_authenticated
     response = self.client.get(reverse('profile', args=[self.username]), follow=True)
   File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\client.py", line 518, in get
     response = super().get(path, data=data, secure=secure, **extra)
@@ -306,11 +306,11 @@ Traceback (most recent call last):
 django.urls.exceptions.NoReverseMatch: Reverse for 'profile' with arguments '('autotesting_friend',)' not found. 1 pattern(s) tried: ['profile/(?P<username>[a-zA-Z0-9]+|)$']
 
 ======================================================================
-ERROR: test_visit_profile_non_existent_invalid_characters_unauthenticated (cenpilos.tests.tests_views.TestProfilePage)
+ERROR: test_visit_profile_non_existent_invalid_characters_unauthenticated (cenpilos.tests.tests_views.TestProfileFunctions)
 Visits a user profile page that has invalid characters as the argument
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 566, in test_visit_profile_non_existent_invalid_characters_unauthenticated
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 560, in test_visit_profile_non_existent_invalid_characters_unauthenticated
     response = self.client.get(reverse('profile', args=['doest_@3j3i_3!!']), follow=True)
   File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\urls\base.py", line 87, in reverse
     return iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
@@ -319,44 +319,229 @@ Traceback (most recent call last):
 django.urls.exceptions.NoReverseMatch: Reverse for 'profile' with arguments '('doest_@3j3i_3!!',)' not found. 1 pattern(s) tried: ['profile/(?P<username>[a-zA-Z0-9]+|)$']
 
 ======================================================================
-FAIL: test_likePost_no_post_non_authenticated (cenpilos.tests.tests_views.TestLikingPost)
-Sends a like request from a non-authenticated user with no posts
+FAIL: test_dashboard_GET_login_unsuccessful (cenpilos.tests.tests_views.TestDashboard)
+Sends an invalid username and a GET request
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 436, in test_likePost_no_post_non_authenticated
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 129, in test_dashboard_GET_login_unsuccessful
+    self.assertRedirects(response, '/login/', status_code=302, target_status_code=403)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\testcases.py", line 337, in assertRedirects
+    self.assertEqual(
+AssertionError: 200 != 403 : Response didn't redirect as expected: Final Response code was 200 (expected 403)
+
+======================================================================
+FAIL: test_dashboard_GET_non_authenticated (cenpilos.tests.tests_views.TestDashboard)
+Sends a GET request to an non-authenticated dashboard instance
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 95, in test_dashboard_GET_non_authenticated
+    self.assertRedirects(response, '/login/', status_code=302, target_status_code=403)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\testcases.py", line 337, in assertRedirects
+    self.assertEqual(
+AssertionError: 200 != 403 : Response didn't redirect as expected: Final Response code was 200 (expected 403)
+
+======================================================================
+FAIL: test_dashboard_POST_ajax_login_successful (cenpilos.tests.tests_views.TestDashboard)
+Sends a valid username and then an ajax POST request
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 272, in test_dashboard_POST_ajax_login_successful
+    self.assertEquals(post.content, body)
+AssertionError: 'This is made by the autotester # 2' != 'Hi there'
+- This is made by the autotester # 2
++ Hi there
+
+
+======================================================================
+FAIL: test_dashboard_POST_fail_empty_ajax_login_successful (cenpilos.tests.tests_views.TestDashboard)
+Sends a valid username and then sends an ajax POST request with invalid data
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 192, in test_dashboard_POST_fail_empty_ajax_login_successful
+    self.assertEquals(list(autotesting_posts), [])
+AssertionError: Lists differ: [<Post: This is made by the autotester # 2[151 chars]ing>] != []
+
+First list contains 5 additional elements.
+First extra element 0:
+<Post: This is made by the autotester # 2 by: autotesting>
+
++ []
+- [<Post: This is made by the autotester # 2 by: autotesting>,
+-  <Post: Post # 2 by: autotesting>,
+-  <Post: Post # 3 by: autotesting>,
+-  <Post: Post # 876 by: autotesting>,
+-  <Post: Post # 4 by: autotesting>]
+
+======================================================================
+FAIL: test_dashboard_POST_fail_multiple_spaces_ajax_login_successful (cenpilos.tests.tests_views.TestDashboard)
+Sends a valid username and then sends an ajax POST request with invalid data
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 243, in test_dashboard_POST_fail_multiple_spaces_ajax_login_successful
+    self.assertEquals(list(autotesting_posts), [])
+AssertionError: Lists differ: [<Post: This is made by the autotester # 2[151 chars]ing>] != []
+
+First list contains 5 additional elements.
+First extra element 0:
+<Post: This is made by the autotester # 2 by: autotesting>
+
++ []
+- [<Post: This is made by the autotester # 2 by: autotesting>,
+-  <Post: Post # 2 by: autotesting>,
+-  <Post: Post # 3 by: autotesting>,
+-  <Post: Post # 876 by: autotesting>,
+-  <Post: Post # 4 by: autotesting>]
+
+======================================================================
+FAIL: test_dashboard_POST_fail_single_space_ajax_login_successful (cenpilos.tests.tests_views.TestDashboard)
+Sends a valid username and then sends an ajax POST request with invalid data
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 217, in test_dashboard_POST_fail_single_space_ajax_login_successful
+    self.assertEquals(list(autotesting_posts), [])
+AssertionError: Lists differ: [<Post: This is made by the autotester # 2[151 chars]ing>] != []
+
+First list contains 5 additional elements.
+First extra element 0:
+<Post: This is made by the autotester # 2 by: autotesting>
+
++ []
+- [<Post: This is made by the autotester # 2 by: autotesting>,
+-  <Post: Post # 2 by: autotesting>,
+-  <Post: Post # 3 by: autotesting>,
+-  <Post: Post # 876 by: autotesting>,
+-  <Post: Post # 4 by: autotesting>]
+
+======================================================================
+FAIL: test_dashboard_POST_multiple_ajax_login_successful (cenpilos.tests.tests_views.TestDashboard)
+Sends a valid username and then multiple ajax POST requests
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 307, in test_dashboard_POST_multiple_ajax_login_successful
+    self.assertCountEqual(post_content, post_bodies)
+AssertionError: Element counts were not equal:
+First has 1, Second has 0:  'This is made by the autotester # 2'
+First has 1, Second has 0:  'Post # 2'
+First has 1, Second has 0:  'Post # 3'
+First has 1, Second has 0:  'Post # 876'
+First has 1, Second has 0:  'Post # 4'
+
+======================================================================
+FAIL: test_dashboard_POST_multiple_fail_one_invalid_empty_ajax_login_successful (cenpilos.tests.tests_views.TestDashboard)
+Sends a valid username then multiple ajax POST requests with one post body being empty
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 350, in test_dashboard_POST_multiple_fail_one_invalid_empty_ajax_login_successful
+    self.assertCountEqual(post_content, post_bodies)
+AssertionError: Element counts were not equal:
+First has 1, Second has 0:  'This is made by the autotester # 2'
+First has 1, Second has 0:  'Post # 2'
+First has 1, Second has 0:  'Post # 3'
+First has 1, Second has 0:  'Post # 876'
+First has 1, Second has 0:  'Post # 4'
+
+======================================================================
+FAIL: test_dashboard_POST_multiple_fail_one_invalid_multiple_spaces_ajax_login_successful (cenpilos.tests.tests_views.TestDashboard)
+Sends a valid username then multiple ajax POST requests with one post body having multiple spaces
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 393, in test_dashboard_POST_multiple_fail_one_invalid_multiple_spaces_ajax_login_successful
+    self.assertCountEqual(post_content, post_bodies)
+AssertionError: Element counts were not equal:
+First has 1, Second has 0:  'This is made by the autotester # 2'
+First has 1, Second has 0:  'Post # 2'
+First has 1, Second has 0:  'Post # 3'
+First has 1, Second has 0:  'Post # 876'
+First has 1, Second has 0:  'Post # 4'
+
+======================================================================
+FAIL: test_delete_post_no_post_unauthenticated (cenpilos.tests.tests_views.TestDeletePost)
+Deletes a non-existent post when there is no user authenticated
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 657, in test_delete_post_no_post_unauthenticated
     self.assertEquals(response.status_code, 403)
 AssertionError: 404 != 403
 
 ======================================================================
-FAIL: test_likePost_post_like_own_post_multiple_times_authenticated (cenpilos.tests.tests_views.TestLikingPost)
+FAIL: test_delete_post_post_exists_other_user_authenticated (cenpilos.tests.tests_views.TestDeletePost)
+Deletes another user's post when the user is logged in
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 690, in test_delete_post_post_exists_other_user_authenticated
+    self.assertEquals(response.status_code, 403)
+AssertionError: 200 != 403
+
+======================================================================
+FAIL: test_delete_post_post_exsists_unauthenticated (cenpilos.tests.tests_views.TestDeletePost)
+Deletes an existent post when the user is NOT authenticated
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 667, in test_delete_post_post_exsists_unauthenticated
+    self.assertEquals(response.status_code, 403)
+AssertionError: 404 != 403
+
+======================================================================
+FAIL: test_likePost_no_post_non_authenticated (cenpilos.tests.tests_views.TestLikePost)
+Sends a like request from a non-authenticated user with no posts
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 430, in test_likePost_no_post_non_authenticated
+    self.assertEquals(response.status_code, 403)
+AssertionError: 404 != 403
+
+======================================================================
+FAIL: test_likePost_post_like_own_post_multiple_times_authenticated (cenpilos.tests.tests_views.TestLikePost)
 Sends multiple like requests from an authenticated user to their own posts
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 515, in test_likePost_post_like_own_post_multiple_times_authenticated
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 509, in test_likePost_post_like_own_post_multiple_times_authenticated
     self.assertEquals(p.total_likes, 0)
 AssertionError: 1 != 0
 
 ======================================================================
-FAIL: test_likePost_post_like_own_post_once_authenticated (cenpilos.tests.tests_views.TestLikingPost)
+FAIL: test_likePost_post_like_own_post_once_authenticated (cenpilos.tests.tests_views.TestLikePost)
 Sends one like request from an authenticated user to their own posts
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 499, in test_likePost_post_like_own_post_once_authenticated
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 493, in test_likePost_post_like_own_post_once_authenticated
     self.assertEquals(first_post[0].total_likes, 0)
 AssertionError: 1 != 0
 
 ======================================================================
-FAIL: test_addFriend_themselves_authenticated (cenpilos.tests.tests_views.TestProfilePage)
+FAIL: test_notifications_non_authenticated (cenpilos.tests.tests_views.TestNotifications)
+Go to notifications page without logging in
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 406, in test_notifications_non_authenticated
+    self.assertRedirects(response, '/login/', status_code=302, target_status_code=403)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\testcases.py", line 337, in assertRedirects
+    self.assertEqual(
+AssertionError: 200 != 403 : Response didn't redirect as expected: Final Response code was 200 (expected 403)
+
+======================================================================
+FAIL: test_addFriend_themselves_authenticated (cenpilos.tests.tests_views.TestProfileFunctions)
 Adds a friend but the user is themselves
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 619, in test_addFriend_themselves_authenticated
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 613, in test_addFriend_themselves_authenticated
     self.assertEquals(autotest_userProfile[0].total_friends, 0)
 AssertionError: 1 != 0
 
+======================================================================
+FAIL: test_visit_profile_non_existent_unauthenticated (cenpilos.tests.tests_views.TestProfileFunctions)
+Visits a user profile that does not exist without logging in
 ----------------------------------------------------------------------
-Ran 57 tests in 17.666s
+Traceback (most recent call last):
+  File "C:\Users\WinUs\project-cenpilos\cenpilos\tests\tests_views.py", line 554, in test_visit_profile_non_existent_unauthenticated
+    self.assertRedirects(response, '/login/', status_code=302, target_status_code=403)
+  File "C:\Users\WinUs\project-cenpilos\venv\lib\site-packages\django\test\testcases.py", line 337, in assertRedirects
+    self.assertEqual(
+AssertionError: 200 != 403 : Response didn't redirect as expected: Final Response code was 200 (expected 403)
 
-FAILED (failures=4, errors=9)
+----------------------------------------------------------------------
+Ran 62 tests in 23.514s
+
+FAILED (failures=18, errors=9)
 Destroying test database for alias 'default'...
 System check identified no issues (0 silenced).

@@ -74,7 +74,6 @@ def dislike_pPost(request):
 
 
 def delete(request):
-    print(request.POST.get('post_id'))
     post = get_object_or_404(Post, id=request.POST.get('post_id'))
     post.delete()
     return JsonResponse({})

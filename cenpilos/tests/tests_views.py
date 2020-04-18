@@ -15,13 +15,13 @@ ALL FEATURES WILL BE tested to make sure everything is correct DURING every beta
 Copyright (c) Zhaoyu Guo 2020. All rights reserved.
 """
 
-from django.test import TestCase
 from django.test import Client
+from django.test import TestCase
 from django.urls import reverse
-from cenpilos.models import *
 from django.utils import timezone
+import random
+
 from cenpilos.forms import *
-from django.contrib.auth import *
 
 
 class Setup(TestCase):
@@ -57,6 +57,30 @@ class Setup(TestCase):
         self.dashboard_name = 'index.html'
         self.profile_name = 'profile.html'
 
+        # friend posts
+        five_posts = ["This is made by the autotester # 1", "Post # 2",
+                      "Post # 3", "Post # 4", "Post # 5"]
+
+        for post in five_posts:
+            autotesting_friend_post = Post.objects.create(
+                content=post,
+                author=self.autotesting_friend,
+                date=timezone.now()
+            )
+            autotesting_friend_post.save()
+
+        # own posts
+        five_posts = ["This is made by the autotester # 2", "Post # 2",
+                      "Post # 3", "Post # 876", "Post # 4"]
+
+        for post in five_posts:
+            autotesting_post = Post.objects.create(
+                content=post,
+                author=self.autotesting,
+                date=timezone.now()
+            )
+            autotesting_post.save()
+
 
 class TestDashboard(Setup):
 
@@ -68,7 +92,7 @@ class TestDashboard(Setup):
 
         response = client.get(reverse('dashboard'), follow=True)
 
-        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
+        self.assertRedirects(response, '/login/', status_code=302, target_status_code=403)
 
         self.assertTemplateNotUsed(response, self.base_template_name + self.dashboard_name)
 
@@ -78,7 +102,7 @@ class TestDashboard(Setup):
         """
         client = Client()
         response = client.post(reverse('dashboard'))
-        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
+        self.assertRedirects(response, '/login/', status_code=302, target_status_code=403)
 
     def test_dashboard_POST_ajax_non_authenticated(self):
         """
@@ -91,7 +115,7 @@ class TestDashboard(Setup):
         response = self.client.post(reverse('dashboard'), data, **{'HTTP_X_REQUESTED_WITH':
                                                                        'XMLHttpRequest'})
 
-        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
+        self.assertRedirects(response, '/login/', status_code=302, target_status_code=403)
 
     def test_dashboard_GET_login_unsuccessful(self):
         """
@@ -102,7 +126,7 @@ class TestDashboard(Setup):
         self.assertFalse(self.client.login(username=credentials[0], password=credentials[1]))
 
         response = self.client.get(reverse('dashboard'), follow=True)
-        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
+        self.assertRedirects(response, '/login/', status_code=302, target_status_code=403)
 
     def test_dashboard_GET_login_successful(self):
         """
@@ -117,6 +141,21 @@ class TestDashboard(Setup):
         self.assertTemplateUsed(response, self.base_template_name + self.dashboard_name)
         self.assertEquals(response.context["user"].username, self.username)
         self.client.logout()
+
+    def test_dashboard_UserProfilePage_created(self):
+        """
+        Tests if a UserProfile object has been created for the logged in user
+        """
+        self.client.login(username=self.username, password=self.password)
+
+        response = self.client.get(reverse('dashboard'), follow=True)
+        self.assertEquals(response.status_code, 200)
+
+        autotesting_Profile = UserProfile.objects.filter(user=self.autotesting)
+        self.assertEquals(len(list(autotesting_Profile)), 1)
+        self.assertEquals(autotesting_Profile[0].user, self.autotesting)
+        self.assertFalse(autotesting_Profile[0].verified)
+        self.assertTrue(autotesting_Profile[0].total_friends == 0)
 
     def test_dashboard_POST_non_ajax_login_successful(self):
         """
@@ -354,21 +393,6 @@ class TestDashboard(Setup):
         self.assertCountEqual(post_content, post_bodies)
         self.client.logout()
 
-    def test_dashboard_UserProfilePage_created(self):
-        """
-        Tests if a UserProfile object has been created for the logged in user
-        """
-        self.client.login(username=self.username, password=self.password)
-
-        response = self.client.get(reverse('dashboard'), follow=True)
-        self.assertEquals(response.status_code, 200)
-
-        autotesting_Profile = UserProfile.objects.filter(user=self.autotesting)
-        self.assertEquals(len(list(autotesting_Profile)), 1)
-        self.assertEquals(autotesting_Profile[0].user, self.autotesting)
-        self.assertFalse(autotesting_Profile[0].verified)
-        self.assertTrue(autotesting_Profile[0].total_friends == 0)
-
 
 class TestNotifications(Setup):
 
@@ -379,7 +403,7 @@ class TestNotifications(Setup):
 
         response = self.client.get(reverse('notifications'), follow=True)
 
-        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
+        self.assertRedirects(response, '/login/', status_code=302, target_status_code=403)
         self.assertTemplateNotUsed(response, self.base_template_name + self.notification_name)
 
     def test_notifications_authenticated(self):
@@ -394,37 +418,7 @@ class TestNotifications(Setup):
         self.assertEquals(response.context["user"].username, self.username)
 
 
-class TestLikingPost(Setup):
-
-    def setUp(self) -> None:
-        """
-        This is NOT a test case. This creates a list of posts.
-        """
-        super(TestLikingPost, self).setUp()
-
-        # friend posts
-        five_posts = ["This is made by the autotester # 1", "Post # 2",
-                      "Post # 3", "Post # 4", "Post # 5"]
-
-        for post in five_posts:
-            autotesting_friend_post = Post.objects.create(
-                content=post,
-                author=self.autotesting_friend,
-                date=timezone.now()
-            )
-            autotesting_friend_post.save()
-
-        # own posts
-        five_posts = ["This is made by the autotester # 2", "Post # 2",
-                      "Post # 3", "Post # 876", "Post # 4"]
-
-        for post in five_posts:
-            autotesting_post = Post.objects.create(
-                content=post,
-                author=self.autotesting,
-                date=timezone.now()
-            )
-            autotesting_post.save()
+class TestLikePost(Setup):
 
     def test_likePost_no_post_non_authenticated(self):
         """
@@ -550,35 +544,35 @@ class TestLikingPost(Setup):
         self.client.logout()
 
 
-class TestProfilePage(Setup):
+class TestProfileFunctions(Setup):
 
     def test_visit_profile_non_existent_unauthenticated(self):
         """
         Visits a user profile that does not exist without logging in
         """
         response = self.client.get(reverse('profile', args=['doesnotexist']), follow=True)
-        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
+        self.assertRedirects(response, '/login/', status_code=302, target_status_code=403)
 
     def test_visit_profile_non_existent_invalid_characters_unauthenticated(self):
         """
         Visits a user profile page that has invalid characters as the argument
         """
         response = self.client.get(reverse('profile', args=['doest_@3j3i_3!!']), follow=True)
-        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
+        self.assertRedirects(response, '/login/', status_code=302, target_status_code=403)
 
     def test_addFriend_user_non_authenticated(self):
         """
         Adds a friend without loggin in
         """
         response = self.client.get(reverse('add_friend', args=['doesnotexist']), follow=True)
-        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
+        self.assertRedirects(response, '/login/', status_code=302, target_status_code=403)
 
     def test_addFriend_user_invalid_characters_non_authenticated(self):
         """
         Adds a friend without loggin in with a username containing invalid characters
         """
         response = self.client.get(reverse('add_friend', args=['doest_@3j3i_3!!']), follow=True)
-        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
+        self.assertRedirects(response, '/login/', status_code=302, target_status_code=403)
 
     def test_visit_own_profile_page_authenticated(self):
         """
@@ -633,3 +627,77 @@ class TestProfilePage(Setup):
             UserProfile.objects.filter(user=self.autotesting).all())
         self.assertEquals(autotest_userProfile[0].total_friends, 1)
         self.client.logout()
+
+
+class TestDeletePost(Setup):
+
+    def setUp(self) -> None:
+        """
+        This is NOT a test case. This is used for setting up the required variables needed to
+        be accessed multiple times
+        """
+        super(TestDeletePost, self).setUp()
+        self.all_posts = list(Post.objects.all())
+        self.autoesting_posts = list(Post.objects.filter(author=self.autotesting).all())
+        self.autotesting_friend_posts = list(Post.objects.filter(author=self.autotesting_friend).all())
+
+        self.all_post_ids = [p.id for p in self.all_posts]
+        self.autoesting_post_ids = [p.id for p in self.autoesting_posts]
+        self.autotesting_friend_post_ids = [p.id for p in self.autotesting_friend_posts]
+
+
+    def test_delete_post_no_post_unauthenticated(self):
+        """
+        Deletes a non-existent post when there is no user authenticated
+        """
+        post_id = 12
+        self.assertNotIn(post_id, self.all_post_ids)
+        # send a delete request
+        response = self.client.post(reverse('delete_post'), {'post_id': post_id}, follow=True)
+        self.assertEquals(response.status_code, 403)
+        self.assertRedirects(response, '/login/', status_code=302, target_status_code=403)
+
+    def test_delete_post_post_exsists_unauthenticated(self):
+        """
+        Deletes an existent post when the user is NOT authenticated
+        """
+        post_id = 12
+        # send a delete request
+        response = self.client.post(reverse('delete_post'), {'post_id': post_id}, follow=True)
+        self.assertEquals(response.status_code, 403)
+        self.assertRedirects(response, '/login/', status_code=302, target_status_code=403)
+
+    def test_delete_post_no_post_authenticated(self):
+        """
+        Deletes a non-existent post when the user is logged in
+        """
+        self.client.login(username=self.username, password=self.password)
+        post_id = 12
+        self.assertNotIn(id, self.all_post_ids)
+        # send a delete request
+        response = self.client.post(reverse('delete_post'), {'post_id': post_id}, follow=True)
+        self.assertEquals(response.status_code, 404)
+        self.client.logout()
+
+    def test_delete_post_post_exists_other_user_authenticated(self):
+        """
+        Deletes another user's post when the user is logged in
+        """
+        self.client.login(username=self.username, password=self.password)
+        post_id = random.choice(self.autotesting_friend_post_ids)
+        # send a delete request
+        response = self.client.post(reverse('delete_post'), {'post_id': post_id}, follow=True)
+        self.assertEquals(response.status_code, 403)
+        self.client.logout()
+
+    def test_delete_post_post_exists_own_post_authenticated(self):
+        """
+        Deletes the authenticated user's post.
+        """
+        self.client.login(username=self.username, password=self.password)
+        post_id = random.choice(self.autoesting_post_ids)
+        # send a delete request
+        response = self.client.post(reverse('delete_post'), {'post_id': post_id}, follow=True)
+        self.assertEquals(response.status_code, 200)
+        self.client.logout()
+
