@@ -106,6 +106,13 @@ class TestUrls(TestCase):
         url = reverse('remove_friend', args=['some_user'])
         self.assertEquals(resolve(url).func, remove_friend)
 
+    def test_comment_url_resolved(self):
+        """
+        Tests to make sure that the comment url is resolved
+        """
+        url = reverse('comment_post')
+        self.assertEquals(resolve(url).func, comment_post)
+
 
 
 

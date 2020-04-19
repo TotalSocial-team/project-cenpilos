@@ -16,12 +16,148 @@ Copyright (c) Zhaoyu Guo 2020. All rights reserved.
 """
 
 import random
+import re
 
-from django.test import Client
+from django.core import mail
+from django.test import *
 from django.urls import reverse
 
 from cenpilos.forms import *
 from .SetupTests import *
+
+
+class TestRegistration(TestCase):
+
+    def test_create_user_full(self):
+        """
+        Creates a user and checks the confirmation email was sent successfully
+        """
+        user_data = {
+            'user1': ['autotestingUser1',
+                      'user123@',
+                      'autotestinguser@cenpilos.tech',
+                      'AutoTesting',
+                      'User']
+        }
+        response_user1 = self.client.post(reverse('register'), {
+            'email': user_data['user1'][2],
+            'username': user_data['user1'][0],
+            'password1': user_data['user1'][1],
+            'password2': user_data['user1'][1],
+            'first_name': user_data['user1'][3],
+            'last_name': user_data['user1'][4]
+        }, follow=True)
+
+        self.assertEquals(response_user1.status_code, 200)
+        user = User.objects.filter(email=user_data['user1'][2]).all()
+        self.assertRedirects(response_user1, '/login/', status_code=302, target_status_code=200)
+        self.assertFalse(user[0].is_active)
+        token_regex = r'activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/'
+        email_content = mail.outbox[0].body
+        match = re.search(token_regex, email_content)
+        # print(match.re)
+        self.assertTrue(len(match.groups()) == 2)
+        args = [match.group(1), match.group(2)]
+        # print(match.)
+        activation_response = self.client.post(reverse('activate', kwargs={'uidb64': args[0], 'token': args[1]}),
+                                               follow=True)
+        self.assertEquals(activation_response.status_code, 200)
+        self.assertTrue(user[0].is_active)
+        messages = list(activation_response.context['messages'])
+        self.assertEquals(len(messages), 0)
+
+    def test_create_two_users_identical_email(self):
+        """
+        Creates two users with identical email addresses
+        """
+        user_data = {
+            'user1': ['autotestingUser1',
+                      'user123@',
+                      'autotestinguser@cenpilos.tech',
+                      'AutoTesting',
+                      'User'],
+            'user2': ['autotestingUser2',
+                      'user123@1',
+                      'autotestinguser@cenpilos.tech',
+                      'AutoTesting',
+                      'u']
+        }
+        response_user1 = self.client.post(reverse('register'), {
+            'email': user_data['user1'][2],
+            'username': user_data['user1'][0],
+            'password1': user_data['user1'][1],
+            'password2': user_data['user1'][1],
+            'first_name': user_data['user1'][3],
+            'last_name': user_data['user1'][4]
+        }, follow=True)
+
+        response_user2 = self.client.post(reverse('register'), {
+            'email': user_data['user2'][2],
+            'username': user_data['user2'][0],
+            'password1': user_data['user2'][1],
+            'password2': user_data['user2'][1],
+            'first_name': user_data['user2'][3],
+            'last_name': user_data['user2'][4]
+        }, follow=True)
+
+        self.assertTrue(response_user1.status_code == 200 and
+                        response_user2.status_code == 200)
+        self.assertRedirects(response_user1, '/login/', status_code=302, target_status_code=200)
+        self.assertTrue(response_user2.redirect_chain == [])
+        self.assertEquals(User.objects.all().count(), 1)
+
+    def test_create_multiple_users_full(self):
+        """
+        Creates a user and checks the confirmation email was sent successfully
+        """
+        user_data = {
+            'user1': ['autotestingUser1',
+                      'user123@',
+                      'autotestinguser@cenpilos.tech',
+                      'AutoTesting',
+                      'User'],
+            'user2': ['autotestingUser2',
+                      'user123@1',
+                      'autotestinguser1@cenpilos.tech',
+                      'AutoTesting',
+                      'u'],
+            'user3': ['autotestingUser3',
+                      'user123@1',
+                      'autotestinguser45@cenpilos.tech',
+                      'AutoTesting',
+                      'u']
+        }
+
+        responses = []
+        for key in user_data:
+            response_user = self.client.post(reverse('register'), {
+                'email': user_data[key][2],
+                'username': user_data[key][0],
+                'password1': user_data[key][1],
+                'password2': user_data[key][1],
+                'first_name': user_data[key][3],
+                'last_name': user_data[key][4]
+            }, follow=True)
+            self.assertRedirects(response_user, '/login/', status_code=302, target_status_code=200)
+            responses.append(response_user)
+        users = User.objects.all()
+        self.assertTrue(len(responses) ==  3 and len(users) == 3 and len(users) == len(responses))
+
+        for r in range(3):
+            token_regex = r'activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/'
+            email_content = mail.outbox[r].body
+            self.assertFalse(users[r].is_active)
+            match = re.search(token_regex, email_content)
+            self.assertTrue(len(match.groups()) == 2)
+            args = [match.group(1), match.group(2)]
+            # print(match.)
+            activation_response = self.client.post(reverse('activate', kwargs={'uidb64': args[0], 'token': args[1]}),
+                                                   follow=True)
+            self.assertEquals(activation_response.status_code, 200)
+            user = User.objects.filter(email=users[r].email).all()
+            self.assertTrue(user[0].is_active)
+            messages = list(activation_response.context['messages'])
+            self.assertEquals(len(messages), 0)
 
 
 class TestDashboard(Setup):
@@ -860,8 +996,8 @@ class TestProfileFunctions(Setup):
 
         self.client.get(reverse('dashboard'), follow=True)
 
-        friend1_response = self.client.get(reverse('add_friend', args=[additional_user1.username]), follow=True)
-        friend2_response = self.client.get(reverse('add_friend', args=[additional_user2.username]), follow=True)
+        friend1_response = self.client.post(reverse('add_friend', args=[additional_user1.username]), follow=True)
+        friend2_response = self.client.post(reverse('add_friend', args=[additional_user2.username]), follow=True)
 
         self.assertTrue(friend1_response.status_code == 200 and friend2_response.status_code == 200)
         testing_userprofiles = list(
@@ -880,7 +1016,7 @@ class TestProfileFunctions(Setup):
         """
         self.client.login(username=self.username, password=self.password)
 
-        response = self.client.get(reverse('remove_friend', args=['doest_@3j3i_3!!']), follow=True)
+        response = self.client.post(reverse('remove_friend', args=['doest_@3j3i_3!!']), follow=True)
         self.assertEquals(response.status_code, 404)
         self.client.logout()
 
@@ -889,7 +1025,7 @@ class TestProfileFunctions(Setup):
         Removes a friend while logged in but the username does not exist in friend list
         """
         self.client.login(username=self.username, password=self.password)
-        response = self.client.get(reverse('remove_friend', args=['doesnotexist']), follow=True)
+        response = self.client.post(reverse('remove_friend', args=['doesnotexist']), follow=True)
         self.assertEquals(response.status_code, 404)
         self.client.logout()
 
@@ -899,8 +1035,8 @@ class TestProfileFunctions(Setup):
         """
         self.client.login(username=self.username, password=self.password)
         self.client.get(reverse('dashboard'), follow=True)
-        self.client.get(reverse('add_friend', args=[self.autotesting_username]), follow=True)
-        response = self.client.get(reverse('remove_friend', args=[self.autotesting_username]), follow=True)
+        self.client.post(reverse('add_friend', args=[self.autotesting_username]), follow=True)
+        response = self.client.post(reverse('remove_friend', args=[self.autotesting_username]), follow=True)
         self.assertEquals(response.status_code, 200)
         # get the UserProfile of that user
         testing_userprofiles = list(
@@ -930,10 +1066,10 @@ class TestProfileFunctions(Setup):
         additional_user2.save()
 
         self.client.get(reverse('dashboard'), follow=True)
-        self.client.get(reverse('add_friend', args=[additional_user1.username]), follow=True)
-        self.client.get(reverse('add_friend', args=[additional_user2.username]), follow=True)
+        self.client.post(reverse('add_friend', args=[additional_user1.username]), follow=True)
+        self.client.post(reverse('add_friend', args=[additional_user2.username]), follow=True)
 
-        friend1_response = self.client.get(reverse('remove_friend', args=[additional_user1.username]), follow=True)
+        friend1_response = self.client.post(reverse('remove_friend', args=[additional_user1.username]), follow=True)
 
         self.assertTrue(friend1_response.status_code == 200)
         testing_userprofiles = list(
@@ -966,11 +1102,11 @@ class TestProfileFunctions(Setup):
         additional_user2.save()
 
         self.client.get(reverse('dashboard'), follow=True)
-        self.client.get(reverse('add_friend', args=[additional_user1.username]), follow=True)
-        self.client.get(reverse('add_friend', args=[additional_user2.username]), follow=True)
+        self.client.post(reverse('add_friend', args=[additional_user1.username]), follow=True)
+        self.client.post(reverse('add_friend', args=[additional_user2.username]), follow=True)
 
-        friend1_response = self.client.get(reverse('remove_friend', args=[additional_user1.username]), follow=True)
-        friend2_response = self.client.get(reverse('remove_friend', args=[additional_user2.username]), follow=True)
+        friend1_response = self.client.post(reverse('remove_friend', args=[additional_user1.username]), follow=True)
+        friend2_response = self.client.post(reverse('remove_friend', args=[additional_user2.username]), follow=True)
 
         self.assertTrue(friend1_response.status_code == 200 and friend2_response.status_code == 200)
         testing_userprofiles = list(

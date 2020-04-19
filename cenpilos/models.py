@@ -39,7 +39,22 @@ class Comment(models.Model):
 
     date = models.DateTimeField()
 
-    likes = models.IntegerField(default=0)
+    likes = models.ManyToManyField(User, related_name='comment_likes')
+
+    @property
+    def total_likes(self) -> int:
+        """
+        Likes for the comment
+        :return: Integer: Likes for the company
+        """
+        return self.likes.count()
+
+    def __str__(self):
+        """
+        The string representation of this
+        model
+        """
+        return self.content + " by: " + self.author.username
 
 
 class UserProfile(models.Model):

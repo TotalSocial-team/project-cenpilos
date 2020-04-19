@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from cenpilos.Blockit.Blockit import getStatus
 from cenpilos.Post.Posting import retrieve_posts_for_feed, save_post
 from cenpilos.Profiles.SaveProfiles import create_profiles
-from cenpilos.forms import PostForm
+from cenpilos.forms import PostForm, CommentForm
 from cenpilos.models import UserProfile
 from cenpilos.scripts import version_info
 from cenpilos.scripts.release_notes import display_rnotes
@@ -11,6 +11,7 @@ from cenpilos.scripts.release_notes import display_rnotes
 
 def get_request(request):
     form = PostForm()
+    comment_form = CommentForm()
 
     if not request.user.is_authenticated:
         return redirect('login')
@@ -45,6 +46,7 @@ def get_request(request):
         'colour': d_colour,
         'posts': posts,
         'feed': 'active',
+        'comment_form': comment_form,
         'form': form,  # IMPORTANT! This is the main post form. DO NOT REMOVE!
         'friends': [friend for u in UserProfile.objects.filter(user=request.user).all() for friend in u.friends.all()]
     }

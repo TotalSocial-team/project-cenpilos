@@ -2,11 +2,11 @@ from itertools import chain
 from typing import List
 
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 
-from cenpilos.forms import PostForm
-from cenpilos.models import Post, UserProfile
+from cenpilos.forms import *
+from cenpilos.models import *
 
 
 def save_post(request, form: PostForm) -> JsonResponse:
@@ -83,3 +83,27 @@ def delete(request):
         return JsonResponse({}, status=403)
     post.delete()
     return JsonResponse({})
+
+def comment(request):
+    post = get_object_or_404(Post, id=request.POST['post_id'])
+    if request.is_ajax():
+        if not request.user.is_authenticated:
+            return redirect('login')
+        # passes the post form with the filled in data for validation
+        form = CommentForm(request.POST)
+
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.content = form.cleaned_data['comment_body'].strip()
+            comment.author = request.user
+            # A minor change to omit autotesting warning
+            comment.date = timezone.now()
+            comment.post = post
+            comment.save()
+            data = {
+                'message': "Successfully submitted form data."
+            }
+            return JsonResponse(data)
+        else:
+            return JsonResponse(form.errors, status=400)
+    return redirect('dashboard')

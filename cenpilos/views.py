@@ -1,32 +1,42 @@
+from django.contrib import messages
+from django.contrib.auth import login
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import send_mail
 from django.shortcuts import render
+from django.template import loader
+from django.template.loader import render_to_string
+from django.utils.encoding import force_text, force_bytes
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.generic import *
 
+from project_cenpilos import settings
 from .BetaUserLogin.login_beta import login_beta_user
 from .Dashboard.dashbaord_requests import get_request, post_request
 from .Notifications.notification_requests import notifications_get_request
 from .Post.Posting import *
 from .Profiles.ProfileFunctions import add_friend_profile, remove_friend_profile
+from .Profiles.ProfileFunctions import userExists
 from .Profiles.profile_requests import *
 from .forms import *
-from .Profiles.ProfileFunctions import userExists
-
 # activation account --- user must verify their account before they will be allowed to sign in!
-# def activate(request, uidb64, token):
-#     try:
-#         uid = force_text(urlsafe_base64_decode(uidb64))
-#         user = User.objects.get(pk=uid)
-#     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-#         user = None
-#
-#     if user is not None and account_activation_token.check_token(user, token):
-#         user.is_active = True
-#         user.save()
-#         login(request, user)
-#         messages.success(request, f'Thank you for confirming your email!')
-#         return redirect('login')
-#     else:
-#         messages.error(request, f'Your activation link is invalid!')
-#         return redirect('login')
+from .tokens.activation_token import account_activation_token
+
+
+def activate(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        login(request, user)
+        return redirect('dashboard')
+    else:
+        messages.warning(request, f'Your activation link is invalid!')
+        return redirect('login')
 
 
 # VIEW CLASSES #
@@ -62,7 +72,6 @@ class RegisterView(View):
         if request.method == "POST":
             # passes the registration form with the filled in data for validation
             form = RegistrationForm(request.POST)
-
             # checks to make sure the form is valid
             if form.is_valid():
                 # saves the form data to the User Model
@@ -78,43 +87,43 @@ class RegisterView(View):
                 # saves the user
                 user.save()
 
-                # # sends the user confirmation email
-                # # get the current site
-                # current_site = get_current_site(request)
-                #
-                # to_list = [user.email]
-                # username = form.cleaned_data['username']
-                # email = form.cleaned_data['email']
-                #
-                # from_email = settings.EMAIL_HOST_USER
-                #
-                # message = render_to_string(
-                #     'cenpilos/email/basic_email_confirmation.html',
-                #     {
-                #         'username': username,
-                #         'email_address': email,
-                #         'domain': get_current_site(request),
-                #         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                #         'token': account_activation_token.make_token(user),
-                #     }
-                # )
-                # subject = 'Activate your account with Practice Logger -- A service by Cenpilos Public.'
-                # html_message = loader.render_to_string(
-                #     'cenpilos/email/confirm_email_address.html',
-                #     {
-                #         'username': username,
-                #         'email_address': email,
-                #         'domain': get_current_site(request),
-                #         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                #         'token': account_activation_token.make_token(user),
-                #     }
-                # )
-                # send_mail(subject, message, from_email, to_list, fail_silently=True, html_message=html_message)
-                #
-                # # Displays visual feedback to let the user know that their account is created
-                # messages.warning(request, f'Before you can start using your account, you must'
-                #                           f'verify your email before being able to login.')
-                # # Redirects the user to the login page
+                # sends the user confirmation email
+                # get the current site
+                current_site = get_current_site(request)
+
+                to_list = [user.email]
+                username = form.cleaned_data['username']
+                email = form.cleaned_data['email']
+
+                from_email = settings.DEFAULT_FROM_EMAIL
+
+                message = render_to_string(
+                    'cenpilos/email/basic_email_confirmation.html',
+                    {
+                        'username': username,
+                        'email_address': email,
+                        'domain': get_current_site(request),
+                        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                        'token': account_activation_token.make_token(user),
+                    }
+                )
+                subject = 'Activate your account with Cenpilos Public'
+                html_message = loader.render_to_string(
+                    'cenpilos/email/confirm_email_address.html',
+                    {
+                        'username': username,
+                        'email_address': email,
+                        'domain': get_current_site(request),
+                        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                        'token': account_activation_token.make_token(user),
+                    }
+                )
+                send_mail(subject, message, from_email, to_list, fail_silently=False, html_message=html_message)
+
+                # Displays visual feedback to let the user know that their account is created
+                messages.warning(request, f'Before you can start using your account, you must '
+                                          f'verify your email before being able to login.')
+                # Redirects the user to the login page
                 return redirect('login')
         else:
             # if nothing was done
@@ -228,6 +237,10 @@ def delete_post(request):
         return redirect('login')
 
     return delete(request)
+
+
+def comment_post(request):
+    """ Handles the posting of a comment in a post """
 
 
 def login_beta(request):

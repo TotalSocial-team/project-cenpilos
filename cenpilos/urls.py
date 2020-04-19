@@ -32,6 +32,9 @@ urlpatterns = [
 
     path('login-beta/', login_beta, name='login-beta'),
 
+    # handle the comment of a post
+    path('comment/', comment_post, name='comment_post'),
+
     # profile page
     re_path(r'profile/(?P<username>[a-zA-Z0-9]+|)',  ProfileView.as_view(), name='profile'),
 
@@ -45,7 +48,7 @@ urlpatterns = [
     re_path(r'remove_friend/(?P<username>[a-zA-Z0-9]+|)', remove_friend, name='remove_friend'),
 
     # # activation
-    # re_path(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', activate,
-    #         name='activate'),
+    re_path(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/', activate,
+            name='activate'),
 
 ]

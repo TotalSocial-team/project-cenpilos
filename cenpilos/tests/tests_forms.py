@@ -15,6 +15,7 @@ Copyright (c) Zhaoyu Guo 2020. All rights reserved.
 """
 
 from django.test import TestCase
+
 from cenpilos.forms import *
 
 
@@ -47,7 +48,6 @@ class RegistrationFormTest(TestCase):
         })
 
         self.assertFalse(form.is_valid())
-
 
     def test_some_fields_empty(self):
         """
@@ -162,7 +162,7 @@ class TestPostForm(TestCase):
         """
 
         form = PostForm(data={
-            "post_body" : ""
+            "post_body": ""
         })
 
         self.assertFalse(form.is_valid())
@@ -193,6 +193,50 @@ class TestPostForm(TestCase):
         """
         form = PostForm(data={
             "post_body": "This is a test"
+        })
+
+        self.assertTrue(form.is_valid())
+
+
+class TestCommentForm(TestCase):
+
+    def test_empty(self):
+        """
+        A comment form with empty data (NO SPACE)
+        """
+
+        form = CommentForm(data={
+            "comment_body": ""
+        })
+
+        self.assertFalse(form.is_valid())
+
+    def test_space(self):
+        """
+        A comment form with a space
+        """
+        form = CommentForm(data={
+            "comment_body": " "
+        })
+
+        self.assertFalse(form.is_valid())
+
+    def test_multiple_space(self):
+        """
+        A comment form with multiple spaces
+        """
+        form = CommentForm(data={
+            "comment_body": "  "
+        })
+
+        self.assertFalse(form.is_valid())
+
+    def test_valid(self):
+        """
+        A comment form with valid data
+        """
+        form = CommentForm(data={
+            "comment_body": "This is a test"
         })
 
         self.assertTrue(form.is_valid())
