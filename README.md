@@ -2,7 +2,7 @@
 This is the open source of all the code for the Cenpilos Social networking site project
 
 ## Test Cases 
-All the test cases are available under the `cenpilos/test` directory. 
+All the test cases are available under the `cenpilos/tests` directory. 
 
 ### Notes on Test Cases 
 In the testing suite `test_views.py`, the testing of 
