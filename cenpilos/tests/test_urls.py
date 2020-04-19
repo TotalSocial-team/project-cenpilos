@@ -113,6 +113,25 @@ class TestUrls(TestCase):
         url = reverse('comment_post')
         self.assertEquals(resolve(url).func, comment_post)
 
-
-
+    # def test_comment_delete_url_resolved(self):
+    #     """
+    #     Test to make sure that the comment deletion url is resolved
+    #     """
+    #     url = reverse('delete_comment')
+    #     self.assertEquals(resolve(url).func, delete_comment)
+    #
+    # def test_comment_like_url_resolved(self):
+    #     """
+    #     Tests to make sure that the comment like url is resolved
+    #     """
+    #     url = reverse('like_comment')
+    #     self.assertEquals(resolve(url).func, like_comment)
+    #
+    # def test_comment_dislike_url_resolved(self):
+    #     """
+    #     Tests to make sure that the comment dislike url is resolved
+    #     """
+    #     url = reverse('dislike_comment')
+    #     self.assertEquals(resolve(url).func, dilike_comment)
+    #
 

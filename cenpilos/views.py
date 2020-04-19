@@ -238,10 +238,11 @@ def delete_post(request):
 
     return delete(request)
 
-
 def comment_post(request):
     """ Handles the posting of a comment in a post """
-
+    if not request.user.is_authenticated:
+        return redirect('login')
+    return comment(request)
 
 def login_beta(request):
     """ Handles automatic login of beta user"""

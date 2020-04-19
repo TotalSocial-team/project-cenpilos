@@ -84,6 +84,7 @@ def delete(request):
     post.delete()
     return JsonResponse({})
 
+
 def comment(request):
     post = get_object_or_404(Post, id=request.POST['post_id'])
     if request.is_ajax():
@@ -101,7 +102,7 @@ def comment(request):
             comment.post = post
             comment.save()
             data = {
-                'message': "Successfully submitted form data."
+                'message': "Successfully submitted comment."
             }
             return JsonResponse(data)
         else:

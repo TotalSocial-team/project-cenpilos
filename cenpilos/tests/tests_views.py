@@ -12,6 +12,7 @@ See tests_models.py for testing models
 This is created to check the correctness of the code written before release.
 ALL FEATURES WILL BE tested to make sure everything is correct DURING every beta release.
 
+
 Copyright (c) Zhaoyu Guo 2020. All rights reserved.
 """
 
@@ -108,7 +109,7 @@ class TestRegistration(TestCase):
 
     def test_create_multiple_users_full(self):
         """
-        Creates a user and checks the confirmation email was sent successfully
+        Creates multiple users and checks the confirmation email was sent successfully
         """
         user_data = {
             'user1': ['autotestingUser1',
@@ -141,7 +142,7 @@ class TestRegistration(TestCase):
             self.assertRedirects(response_user, '/login/', status_code=302, target_status_code=200)
             responses.append(response_user)
         users = User.objects.all()
-        self.assertTrue(len(responses) ==  3 and len(users) == 3 and len(users) == len(responses))
+        self.assertTrue(len(responses) == 3 and len(users) == 3 and len(users) == len(responses))
 
         for r in range(3):
             token_regex = r'activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/'
@@ -343,7 +344,7 @@ class TestDashboard(Setup):
         )
 
         get_request = self.client.get(reverse('dashboard'), follow=True)
-        # # checks to make sure that it actually saved
+        # checks to make sure that it actually saved
         autotesting_posts = Post.objects.filter(author=get_request.context["user"]).all()
 
         for post in autotesting_posts:
@@ -756,6 +757,141 @@ class TestDisLikePost(SetupPosts):
         self.client.logout()
 
 
+class TestCommentPost(SetupPosts):
+
+    def setUp(self) -> None:
+        """
+        This is NOT a test case. This is used for setting up the required variables needed to
+        be accessed multiple times
+        """
+        super(TestCommentPost, self).setUp()
+        self.all_posts = list(Post.objects.all())
+        self.autoesting_posts = list(Post.objects.filter(author=self.autotesting).all())
+        self.autotesting_friend_posts = list(Post.objects.filter(author=self.autotesting_friend).all())
+
+        self.all_post_ids = [p.id for p in self.all_posts]
+        self.autoesting_post_ids = [p.id for p in self.autoesting_posts]
+        self.autotesting_friend_post_ids = [p.id for p in self.autotesting_friend_posts]
+
+    def login(self):
+        """
+        Logs in the current user
+        """
+        self.client.login(username=self.username, password=self.password)
+
+    def test_commentPost_no_post_unauthenticated(self):
+        """
+        Posts a comment on an non-existent post when the user is not authenticated
+        """
+        post_id = 234
+        self.assertNotIn(post_id, self.all_post_ids)
+        # sends a comment request
+        response = self.client.post(reverse('comment_post'), {'post_id': post_id}, follow=True)
+        self.assertEquals(response.status_code, 200)
+        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
+
+    def test_commentPost_post_exists_unauthenticated(self):
+        """
+        Posts a comment on an existent post when the user is not authenticated
+        """
+        post_id = random.choice(self.all_post_ids)
+        # sends a comment request
+        response = self.client.post(reverse('comment_post'), {'post_id': post_id}, follow=True)
+        self.assertEquals(response.status_code, 200)
+        self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
+
+    def test_commentPost_non_existent_post_authenticated(self):
+        """
+        Posts a comment on a non-existent post when they are authenticated
+        """
+        self.login()
+        post_id = 23343
+        self.assertNotIn(post_id, self.all_post_ids)
+        response = self.client.post(reverse('comment_post'), {'post_id': post_id}, follow=True)
+        self.assertEquals(response.status_code, 404)
+        self.assertEquals(response.redirect_chain, [])
+        self.client.logout()
+
+    def test_commentPost_own_post_authenticated(self):
+        """
+        Posts a comment on their own post when they are authenticated
+        """
+        self.login()
+        post_id = random.choice(self.autoesting_post_ids)
+        # get the post with that id
+        post_with_post_id = Post.objects.get(id=post_id)
+        data = {
+            'post_id': post_id,
+            'comment_body': 'Hi this is a test comment'
+        }
+        response = self.client.post(reverse('comment_post'), data, **{'HTTP_X_REQUESTED_WITH':
+                                                                          'XMLHttpRequest'}, follow=True)
+        self.assertJSONEqual(
+            str(response.content, encoding='utf8'),
+            {'message': "Successfully submitted comment."}
+        )
+
+        # make sure that the comment for that post exists
+        comments = Comment.objects.get(author=self.autotesting, post=post_with_post_id)
+        self.assertEquals(comments.post.id, post_id)
+        self.assertEquals(comments.content, "Hi this is a test comment")
+        self.assertTrue(comments.total_likes == 0)
+
+    def test_commentPost_others_authenticated(self):
+        """
+        Posts a variety of comments on existent, but not their own post when they are authenticated
+        """
+        self.login()
+        post_ids = random.sample(self.autotesting_friend_post_ids, 3)
+        comments = ['This is a good comment', "very good", "plus me"]
+        for pid in post_ids:
+            comment = random.choice(comments)
+            post = Post.objects.get(id=pid)
+            data = {
+                'post_id': pid,
+                'comment_body': comment
+            }
+            response = self.client.post(reverse('comment_post'), data, **{'HTTP_X_REQUESTED_WITH':
+                                                                              'XMLHttpRequest'}, follow=True)
+            self.assertJSONEqual(
+                str(response.content, encoding='utf8'),
+                {'message': "Successfully submitted comment."}
+            )
+            comment_check = Comment.objects.get(author=self.autotesting, post=post)
+            self.assertEquals(comment_check.post.id, pid)
+            self.assertEquals(comment_check.content, comment)
+            self.assertTrue(comment_check.total_likes == 0)
+        self.client.logout()
+
+    def test_commentPost_random_posts_authenticated(self):
+        """
+        Posts a variety of comments on randomly selected posts (not their own posts) when they are authenticated
+        """
+        self.login()
+        post_ids = random.sample(self.autotesting_friend_post_ids, 3) + \
+                   random.sample(self.autoesting_post_ids, 3)
+        comments = ['This is a good comment', "very good", "plus me", "blan blah blah"]
+        for pid in post_ids:
+            comment = random.choice(comments)
+            post = Post.objects.get(id=pid)
+            data = {
+                'post_id': pid,
+                'comment_body': comment
+            }
+            response = self.client.post(reverse('comment_post'), data, **{'HTTP_X_REQUESTED_WITH':
+                                                                              'XMLHttpRequest'}, follow=True)
+            self.assertJSONEqual(
+                str(response.content, encoding='utf8'),
+                {'message': "Successfully submitted comment."}
+            )
+            comment_check = Comment.objects.get(author=self.autotesting, post=post)
+            self.assertEquals(comment_check.post.id, pid)
+            self.assertEquals(comment_check.content, comment)
+            self.assertTrue(comment_check.total_likes == 0)
+
+        self.client.logout()
+
+
 class TestDeletePost(SetupPosts):
 
     def setUp(self) -> None:
@@ -772,7 +908,7 @@ class TestDeletePost(SetupPosts):
         self.autoesting_post_ids = [p.id for p in self.autoesting_posts]
         self.autotesting_friend_post_ids = [p.id for p in self.autotesting_friend_posts]
 
-    def test_delete_post_no_post_unauthenticated(self):
+    def test_deletePost_no_post_unauthenticated(self):
         """
         Deletes a non-existent post when there is no user authenticated
         """
@@ -783,17 +919,17 @@ class TestDeletePost(SetupPosts):
         self.assertEquals(response.status_code, 200)
         self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
 
-    def test_delete_post_post_exsists_unauthenticated(self):
+    def test_deletePost_post_exsists_unauthenticated(self):
         """
         Deletes an existent post when the user is NOT authenticated
         """
-        post_id = 12
+        post_id = random.choice(self.all_post_ids)
         # send a delete request
         response = self.client.post(reverse('delete_post'), {'post_id': post_id}, follow=True)
         self.assertEquals(response.status_code, 200)
         self.assertRedirects(response, '/login/', status_code=302, target_status_code=200)
 
-    def test_delete_post_no_post_authenticated(self):
+    def test_deletePost_no_post_authenticated(self):
         """
         Deletes a non-existent post when the user is logged in
         """
@@ -805,7 +941,7 @@ class TestDeletePost(SetupPosts):
         self.assertEquals(response.status_code, 404)
         self.client.logout()
 
-    def test_delete_post_post_exists_other_user_authenticated(self):
+    def test_deletePost_post_exists_other_user_authenticated(self):
         """
         Deletes another user's post when the user is logged in
         """
@@ -816,7 +952,7 @@ class TestDeletePost(SetupPosts):
         self.assertEquals(response.status_code, 403)
         self.client.logout()
 
-    def test_delete_post_post_exists_own_post_authenticated(self):
+    def test_deletePost_post_exists_own_post_authenticated(self):
         """
         Deletes the authenticated user's post.
         """
